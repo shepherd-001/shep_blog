@@ -7,6 +7,7 @@ import com.shepherd.shep_blog.data.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,10 @@ import org.springframework.stereotype.Service;
 public class AdminServiceImpl implements AdminService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private static final String ADMIN_PASSWORD = "Admin123$";
+    @Value("${admin_email}")
+    private String adminEmail;
+    @Value("${admin_password}")
+    private String adminPassword;
 
     @PostConstruct
     private void createAdminIfNotExists() {
@@ -24,12 +28,13 @@ public class AdminServiceImpl implements AdminService {
             log.info("Admin already exists");
             return;
         }
+
         User admin = User.builder()
                 .firstName("Admin")
                 .lastName("Admin")
                 .gender(Gender.MALE)
-                .email("admin@mailinator.com")
-                .password(passwordEncoder.encode(ADMIN_PASSWORD))
+                .email(adminEmail)
+                .password(passwordEncoder.encode(adminPassword))
                 .role(Role.ADMIN)
                 .isEnabled(true)
                 .isEmailVerified(true)
