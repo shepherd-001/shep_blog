@@ -1,0 +1,144 @@
+package com.shepherd.shep_blog.exceptions.handler;
+
+import com.shepherd.shep_blog.data.dto.response.ApiResponse;
+import com.shepherd.shep_blog.exceptions.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<?>> handleAllUncaught(Exception ex, HttpServletRequest request) {
+        log.error("Uncaught exception: {}", ex.getMessage(), ex);
+        String message = "An unexpected error occurred. Please try again later.";
+        return buildErrorResponse(message, request, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(UsernameNotFoundException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(IllegalArgumentException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(IllegalStateException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotVerifiedException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(UserNotVerifiedException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(BadCredentialsException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(AccessDeniedException ex, HttpServletRequest request) {
+        log.error("==>> Access Denied Exception: {}", ex.getMessage());
+        return buildErrorResponse("You do not have the permission to access this resource", request, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(AuthorizationDeniedException ex, HttpServletRequest request) {
+        log.error("Authorization denied exception: {}", ex.getMessage());
+        String errorMessage = "You are not authorized to access this resource";
+        return buildErrorResponse(errorMessage, request, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(ApiResponse.error(errors, request, status));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<?>> handleEnumConversionError(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+        String message = "Invalid value for parameter '%s': %s".formatted(ex.getName(), ex.getValue());
+        return buildErrorResponse(message, request, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(ConstraintViolationException ex, HttpServletRequest request) {
+        String errorMessage = ex.getConstraintViolations().stream().findFirst().map(ConstraintViolation::getMessage).orElse("Field validation error");
+
+        log.error("Constraint violation exception: {}", ex.getMessage());
+        return buildErrorResponse(errorMessage, request, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnsupportedOperationException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(UnsupportedOperationException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(AlreadyExistsException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(EmailValidationException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(EmailValidationException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserAlreadyEnabledException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(UserAlreadyEnabledException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(ResourceNotFoundException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidJwtException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(InvalidJwtException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(SecurityException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(UnauthorizedException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getMessage(), request, HttpStatus.UNAUTHORIZED);
+    }
+
+    private ResponseEntity<ApiResponse<?>> buildErrorResponse(String message, HttpServletRequest request, HttpStatus status) {
+        ApiResponse<?> response = ApiResponse.error(message, request, status);
+        return ResponseEntity.status(status).body(response);
+    }
+}
