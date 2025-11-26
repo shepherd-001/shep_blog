@@ -1,7 +1,7 @@
 package com.shepherd.shep_blog.security;
 
 import com.shepherd.shep_blog.exceptions.InvalidJwtException;
-import com.shepherd.shep_blog.security.securityConfig.JwtTokenService;
+import com.shepherd.shep_blog.services.JwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class LogoutService{
         long remainingSeconds = Duration.between(Instant.now(), expiration).getSeconds();
 
         if(remainingSeconds > 0){
-            jwtTokenService.blacklistAccessToken(jwtId, remainingSeconds);
+            jwtTokenService.blacklistAccessToken(jwtId);
             log.info("==>> User {} logged out, token blacklisted for {} seconds", userEmail, remainingSeconds);
         }
         else log.info("==>> Token already expired, no need for blacklist");

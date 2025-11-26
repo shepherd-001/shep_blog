@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.security;
 
-import com.shepherd.shep_blog.security.securityConfig.JwtTokenService;
+import com.shepherd.shep_blog.services.JwtTokenService;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

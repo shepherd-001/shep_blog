@@ -5,7 +5,7 @@ import com.shepherd.shep_blog.data.dto.response.AuthResponse;
 import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.security.AuthenticatedUser;
 import com.shepherd.shep_blog.security.JwtUtils;
-import com.shepherd.shep_blog.security.securityConfig.JwtTokenService;
+import com.shepherd.shep_blog.services.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
