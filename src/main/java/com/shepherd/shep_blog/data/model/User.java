@@ -16,10 +16,7 @@ import java.time.Instant;
         @Index(name = "idx_email", columnList = "email"),
         @Index(name = "idx_createdAt", columnList = "createdAt")
 })
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+public class User extends BaseEntity {
     private String firstName;
     private String lastName;
     @Column(unique = true)
@@ -28,15 +25,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name = "role_id", nullable = false)
-//    private UserRole role;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "role_id", nullable = false)
+    private UserRole role;
 
     @Column(name = "enabled")
     private boolean isEnabled;
     private boolean isEmailVerified;
-    @CreatedDate
-    private Instant createdAt;
 }

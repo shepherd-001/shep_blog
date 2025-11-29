@@ -1,6 +1,7 @@
 package com.shepherd.shep_blog.security;
 
 import com.shepherd.shep_blog.data.model.User;
+import com.shepherd.shep_blog.data.model.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,35 +19,24 @@ import java.util.List;
 @Slf4j
 public class AuthenticatedUser implements UserDetails {
     private final User user;
-    private transient Collection<? extends GrantedAuthority> authorities;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(authorities != null) {
-            return authorities;
-        }
-
         if(user == null || user.getRole() == null) {
-            log.warn("The user or user role is null");
-            authorities = Collections.emptyList();
-            return authorities;
+            log.info("The user or user role is empty");
+            return Collections.emptyList();
         }
 
-        List<SimpleGrantedAuthority> auths = new ArrayList<>();
-        auths.add(new SimpleGrantedAuthority("ROLE_"+user.getRole().name()));
+        UserRole role = user.getRole();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-//        UserRole role = user.getRole();
-//        List<SimpleGrantedAuthority> auths = new ArrayList<>();
-//        auths.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-//
-//        if(role.getPermissions() != null) {
-//            role.getPermissions().stream()
-//                    .filter(Objects::nonNull)
-//                    .map(permission -> new SimpleGrantedAuthority(permission.getName()))
-//                    .forEach(auths::add);
-//        }
-        authorities = Collections.unmodifiableCollection(auths);
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+
+        if(role.getPermissions() != null) {
+            role.getPermissions().stream()
+                    .map(permission -> new SimpleGrantedAuthority(permission.getName()))
+                    .forEach(authorities::add);
+        }
         return authorities;
     }
 
@@ -77,6 +67,6 @@ public class AuthenticatedUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return (user.isEnabled() && user.isEmailVerified());
+        return user.isEnabled();
     }
 }

@@ -37,7 +37,9 @@ public class GlobalExceptionHandler {
             IllegalStateException.class,
             EmailValidationException.class,
             UserAlreadyEnabledException.class,
-            InvalidJwtException.class
+            InvalidJwtException.class,
+            ShepTokenException.class,
+            MailSenderException.class
     })
     public ResponseEntity<ApiResponse<?>> handleBadRequest(Exception ex, HttpServletRequest request) {
         return ResponseEntity.badRequest().body(ApiResponse.error(ex.getMessage(), request));
