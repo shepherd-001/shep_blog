@@ -71,7 +71,6 @@ public class TokenServiceImpl implements TokenService{
         return token;
     }
 
-
     @Override
     public TokenEntity validateToken(String token, TokenType tokenType, String expectedEmail) {
         String hashedToken = HashUtils.sha256(token);

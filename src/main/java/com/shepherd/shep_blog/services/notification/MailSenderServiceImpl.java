@@ -27,7 +27,6 @@ public class MailSenderServiceImpl implements MailSenderService {
 
 
     @Override
-    @Async
     public void sendEmail(String to, String subject, String htmlContent) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();

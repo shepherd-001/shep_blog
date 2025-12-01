@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 public class ResetPasswordRequest {
     @NotBlank(message = ValidationMessage.BLANK_EMAIL)
-    @Email(regexp = RegexPattern.EMAIL, message = ValidationMessage.INVALID_EMAIL)
+    @Pattern(regexp = RegexPattern.EMAIL, message = ValidationMessage.INVALID_EMAIL)
     private String email;
 
     @NotBlank(message = ValidationMessage.BLANK_TOKEN)

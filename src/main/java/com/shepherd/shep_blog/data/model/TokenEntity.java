@@ -1,12 +1,14 @@
 package com.shepherd.shep_blog.data.model;
 
-import lombok.Builder;
-import lombok.Value;
+import lombok.*;
 
 import java.time.Instant;
 
 @Builder
-@Value
+@Getter
+//@Value
+@NoArgsConstructor
+@AllArgsConstructor
 public class TokenEntity {
     String email;
 

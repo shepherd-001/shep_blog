@@ -96,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
     private void sendPasswordResetToken(User user) {
         String token = tokenService.generateToken(user.getEmail(), TokenType.RESET_PASSWORD);
         notificationService.sendResetPasswordMail(user, token);
-        log.info("==>> Password reset token sent to: {}", user.getEmail());
+        log.info("==>> Password reset email sent to: {}", user.getEmail());
     }
 
     @Override
