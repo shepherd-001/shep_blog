@@ -3,6 +3,7 @@ package com.shepherd.shep_blog.controllers;
 import com.shepherd.shep_blog.data.dto.request.ChangePasswordRequest;
 import com.shepherd.shep_blog.data.dto.request.LoginRequest;
 import com.shepherd.shep_blog.data.dto.request.ResetPasswordRequest;
+import com.shepherd.shep_blog.data.dto.request.VerifyEmailRequest;
 import com.shepherd.shep_blog.data.dto.response.ApiResponse;
 import com.shepherd.shep_blog.security.LogoutService;
 import com.shepherd.shep_blog.services.auth.AuthService;
@@ -25,6 +26,12 @@ public class AuthController {
     private final AuthService authService;
     private final LogoutService logoutService;
 
+
+    @PostMapping("/verify")
+    public ResponseEntity<ApiResponse<?>> verifyEmail(@Valid @RequestBody VerifyEmailRequest verifyEmailRequest) {
+        return ResponseEntity.ok(ApiResponse
+                .success("Email verified successfully", authService.verifyEmail(verifyEmailRequest)));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<?>> login(@Valid @RequestBody LoginRequest loginRequest) {

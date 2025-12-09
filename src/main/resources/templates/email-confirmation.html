@@ -113,15 +113,15 @@
     <div class="email-content">
         <div class="email-header">
             <h1>Verify Your Email Address</h1>
-            <p class="greeting">Hello <strong th:text="${firstName}">[User]</strong>,</p>
+            <p class="greeting">Hello <strong th:text="${userName}">[User]</strong>,</p>
         </div>
 
         <p class="intro-text">
-            Welcome to Sheps Library! We're thrilled to have you join our community of book lovers. With Sheps Library, you can easily manage your reading lists, track your progress, and discover new books tailored to your interests.
+            Welcome to <strong>Sheps Blog</strong>! We're excited to have you join our vibrant community of readers, thinkers, and storytellers. Here, you'll discover engaging articles, thought-provoking ideas, and stories that inspire and entertain.
         </p>
 
         <p class="intro-text">
-            To complete your registration, please confirm your email address. This will ensure your account is securely activated and ready to use.
+            To start enjoying your personalized blog experience, please confirm your email address. This ensures your account is fully activated and ready to explore the latest posts, updates, and exclusive content from Sheps Blog.
         </p>
 
         <p>Click the button below to confirm your email:</p>
@@ -130,7 +130,7 @@
             <a th:href="${confirmationLink}" class="btn">Confirm Your Email</a>
         </div>
 
-        <p>If you did not create an account or did not request this verification, feel free to disregard this email.</p>
+        <p>If you did not sign up for Sheps Blog or did not request this verification, you can safely ignore this email.</p>
 
         <div class="footer">
             <p>
@@ -138,11 +138,11 @@
             </p>
             <p>
                 Best regards,<br>
-                The Shep Blog Team
+                The Sheps Blog Team
             </p>
 
             <p style="margin-top: 20px; color: #999; font-size: 13px;">
-                © <span th:text="${T(java.time.Year).now().value}">2025</span> Your Company. All Rights Reserved.
+                © <span th:text="${T(java.time.Year).now().value}">2025</span> Sheps Blog. All Rights Reserved.
             </p>
         </div>
     </div>

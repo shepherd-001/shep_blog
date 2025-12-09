@@ -1,14 +1,18 @@
 package com.shepherd.shep_blog.services.auth;
 
+import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.data.dto.request.ChangePasswordRequest;
 import com.shepherd.shep_blog.data.dto.request.LoginRequest;
 import com.shepherd.shep_blog.data.dto.request.ResetPasswordRequest;
+import com.shepherd.shep_blog.data.dto.request.VerifyEmailRequest;
 import com.shepherd.shep_blog.data.dto.response.AuthResponse;
+import com.shepherd.shep_blog.data.dto.response.VerifyEmailResponse;
 import com.shepherd.shep_blog.data.model.TokenEntity;
 import com.shepherd.shep_blog.data.model.TokenType;
 import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.repository.UserRepository;
 import com.shepherd.shep_blog.exceptions.ResourceNotFoundException;
+import com.shepherd.shep_blog.exceptions.UserAlreadyEnabledException;
 import com.shepherd.shep_blog.security.AuthenticatedUser;
 import com.shepherd.shep_blog.security.JwtUtils;
 import com.shepherd.shep_blog.security.SecurityUtils;
@@ -38,6 +42,25 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final TokenService tokenService;
     private final MailNotificationService  notificationService;
+    private final UserMapper userMapper;
+
+
+    @Override
+    @Transactional
+    public VerifyEmailResponse verifyEmail(VerifyEmailRequest request) {
+        TokenEntity tokenEntity = tokenService.validateToken(request.getToken(), TokenType.EMAIL_CONFIRMATION, request.getEmail());
+        User user = getUserByEmail(tokenEntity.getEmail());
+
+        if(user.isEmailVerified())
+            throw new UserAlreadyEnabledException("User is already verified");
+       if (user.isEnabled())
+            throw new UserAlreadyEnabledException("User is already enabled");
+
+        user.setEnabled(true);
+        user.setEmailVerified(true);
+        userRepository.save(user);
+        return userMapper.mapToVerifyEmailResponse(user, generateJwtToken(user));
+    }
 
     @Override
     public AuthResponse login(LoginRequest loginRequest) {
@@ -100,7 +123,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    @Transactional
     public AuthResponse resetPassword(ResetPasswordRequest request) {
         TokenEntity tokenEntity = tokenService.validateToken(request.getToken(),
                 TokenType.RESET_PASSWORD, request.getEmail());

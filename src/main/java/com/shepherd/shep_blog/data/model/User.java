@@ -2,9 +2,6 @@ package com.shepherd.shep_blog.data.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.time.Instant;
 
 @Entity
 @AllArgsConstructor
@@ -13,12 +10,15 @@ import java.time.Instant;
 @Getter
 @Setter
 @Table(indexes = {
+        @Index(name = "idx_userName", columnList = "userName"),
         @Index(name = "idx_email", columnList = "email"),
         @Index(name = "idx_createdAt", columnList = "createdAt")
 })
 public class User extends BaseEntity {
     private String firstName;
     private String lastName;
+    @Column(unique = true)
+    private String userName;
     @Column(unique = true)
     private String email;
     private String password;
@@ -29,7 +29,6 @@ public class User extends BaseEntity {
     @JoinColumn(name = "role_id", nullable = false)
     private UserRole role;
 
-    @Column(name = "enabled")
-    private boolean isEnabled;
-    private boolean isEmailVerified;
+    private boolean enabled;
+    private boolean emailVerified;
 }

@@ -31,7 +31,7 @@ public class MailNotificationServiceImpl implements MailNotificationService {
     public void sendVerificationMail(User user, String token) {
         String verificationLink = LinkBuilder.buildWithToken(clientUrl, "/verify", token);
         Map<String, Object> variables = Map.of(
-                "firstName", user.getFirstName(),
+                "userName", user.getUserName(),
                 "confirmationLink", verificationLink
         );
         mailAsyncExecutor.sendEmailAsync("email-confirmation", "Confirm Your Email Address", user.getEmail(), variables);
