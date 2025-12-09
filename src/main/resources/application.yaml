@@ -67,10 +67,6 @@ spring:
           connectiontimeout: 10000
           timeout: 10000
           writetimeout: 10000
-  web:
-    resources:
-      add-mappings: false
-#        debug: true
 
 executor:
   mail:
@@ -96,13 +92,6 @@ jwt:
   access_expiration: ${JWT_EXPIRATION}
   refresh_expiration: ${JWT_REFRESH_EXPIRATION}
   issuer: "ShepBlog"
-
-app:
-  seed:
-    roles:
-      - ADMIN
-      - LIBRARIAN
-      - MEMBER
 
   security:
     allowed-origins:

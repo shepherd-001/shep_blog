@@ -1,10 +1,12 @@
-package com.shepherd.shep_blog.services.reader;
+package com.shepherd.shep_blog.services.user;
 
 import com.shepherd.shep_blog.data.dto.request.RegisterReaderRequest;
-import com.shepherd.shep_blog.data.dto.response.RegisterReaderResponse;
+import com.shepherd.shep_blog.data.dto.response.RegisterUserResponse;
+import com.shepherd.shep_blog.data.model.Reader;
 import com.shepherd.shep_blog.data.model.TokenType;
 import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.model.UserRole;
+import com.shepherd.shep_blog.data.repository.ReaderRepository;
 import com.shepherd.shep_blog.data.repository.UserRepository;
 import com.shepherd.shep_blog.exceptions.AlreadyExistsException;
 import com.shepherd.shep_blog.mapper.UserMapper;
@@ -22,9 +24,10 @@ import static com.shepherd.shep_blog.utils.RoleUtil.READER;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ReaderServiceImpl implements ReaderService {
+public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final ReaderRepository readerRepository;
     private final MailNotificationService notificationService;
     private final UserMapper userMapper;
     private final TokenService tokenService;
@@ -33,13 +36,17 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     @Transactional
-    public RegisterReaderResponse registerReader(RegisterReaderRequest request) {
+    public RegisterUserResponse registerReader(RegisterReaderRequest request) {
         validateRegisterRequest(request);
         User user = userMapper.mapToUser(request);
         UserRole role = roleService.getRole(READER);
         user.setRole(role);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user = userRepository.save(user);
+
+        Reader reader = Reader.builder()
+                .user(user)
+                .build();
+        readerRepository.save(reader);
 
         String token = tokenService.generateToken(user.getEmail(), TokenType.EMAIL_CONFIRMATION);
         notificationService.sendVerificationMail(user, token);

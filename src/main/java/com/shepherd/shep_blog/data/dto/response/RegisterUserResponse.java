@@ -4,11 +4,9 @@ import com.shepherd.shep_blog.data.model.Gender;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Builder
 @Getter
-public class RegisterReaderResponse {
+public class RegisterUserResponse {
     private String userName;
     private String firstName;
     private String lastName;

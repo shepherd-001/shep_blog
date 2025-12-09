@@ -2,7 +2,7 @@ package com.shepherd.shep_blog.mapper;
 
 import com.shepherd.shep_blog.data.dto.request.RegisterReaderRequest;
 import com.shepherd.shep_blog.data.dto.response.AuthResponse;
-import com.shepherd.shep_blog.data.dto.response.RegisterReaderResponse;
+import com.shepherd.shep_blog.data.dto.response.RegisterUserResponse;
 import com.shepherd.shep_blog.data.dto.response.VerifyEmailResponse;
 import com.shepherd.shep_blog.data.model.User;
 import org.mapstruct.Mapper;
@@ -11,6 +11,7 @@ import org.mapstruct.Named;
 
 @Mapper(config = MapConfig.class)
 public interface UserMapper {
+
     VerifyEmailResponse mapToVerifyEmailResponse(User user, AuthResponse authResponse);
 
     @Mapping(target = "userName", source = "userName", qualifiedByName = "toLowerCaseTrim")
@@ -19,7 +20,7 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     User mapToUser(RegisterReaderRequest request);
 
-    RegisterReaderResponse mapToRegisterReaderResponse(User user);
+    RegisterUserResponse mapToRegisterReaderResponse(User user);
 
     @Named("toLowerCaseTrim")
     default String toLowerCaseTrim(String value) {

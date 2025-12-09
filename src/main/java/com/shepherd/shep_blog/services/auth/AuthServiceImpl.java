@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public VerifyEmailResponse verifyEmail(VerifyEmailRequest request) {
-        TokenEntity tokenEntity = tokenService.validateToken(request.getToken(), TokenType.EMAIL_CONFIRMATION, request.getEmail());
+        TokenEntity tokenEntity = tokenService.validateToken(request.getToken(), request.getTokenType(), request.getEmail());
         User user = getUserByEmail(tokenEntity.getEmail());
 
         if(user.isEmailVerified())
@@ -58,7 +58,8 @@ public class AuthServiceImpl implements AuthService {
 
         user.setEnabled(true);
         user.setEmailVerified(true);
-        userRepository.save(user);
+
+        user = userRepository.save(user);
         return userMapper.mapToVerifyEmailResponse(user, generateJwtToken(user));
     }
 

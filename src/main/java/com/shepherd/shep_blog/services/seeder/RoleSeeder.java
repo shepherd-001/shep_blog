@@ -27,9 +27,10 @@ public class RoleSeeder {
     public void seedRoles() {
 
         Map<String, Set<String>> rolePermissionMap = Map.of(
-                SUPER_ADMIN, Set.of("CREATE_POST", "EDIT_POST", "DELETE_POST", "MANAGE_USERS", "INVITE_ADMIN"),
+                SUPER_ADMIN, Set.of("CREATE_POST", "EDIT_POST", "DELETE_POST", "MANAGE_USERS", "INVITE_ADMIN", "REMOVE_ADMIN"),
                 ADMIN, Set.of("CREATE_POST", "EDIT_POST", "DELETE_POST", "MANAGE_USERS"),
-                AUTHOR, Set.of("CREATE_POST", "EDIT_POST"),
+                SUPER_AUTHOR, Set.of("CREATE_POST", "EDIT_POST", "DELETE_POST", "ADD_MEMBER", "REMOVE_MEMBER"),
+                AUTHOR, Set.of("CREATE_POST", "EDIT_POST", "DELETE_POST"),
                 READER, Set.of("VIEW_POST")
         );
 

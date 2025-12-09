@@ -10,8 +10,8 @@ public class VerifyEmailResponse {
     private String lastName;
     private String userName;
     private String email;
-    private boolean isEmailVerified;
-    private boolean isEnabled;
+    private boolean enabled;
+    private boolean emailVerified;
     private String accessToken;
     private String refreshToken;
 }
