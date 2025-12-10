@@ -85,7 +85,8 @@ public class TokenServiceImpl implements TokenService{
         }
 
         if(!tokenEntity.getEmail().equalsIgnoreCase(expectedEmail.trim())){
-            throw new ShepTokenException("Invalid email for token");
+            log.info("Invalid email for token");
+            throw new ShepTokenException("Token is invalid or expired");
         }
         // auto invalidate token after successful use
         redisTemplate.delete(key);

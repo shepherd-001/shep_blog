@@ -94,6 +94,7 @@ jwt:
   refresh_expiration: ${JWT_REFRESH_EXPIRATION}
   issuer: "ShepBlog"
 
+app:
   security:
     allowed-origins:
       - http://localhost:3000

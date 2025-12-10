@@ -4,22 +4,15 @@ import com.shepherd.shep_blog.data.model.TokenType;
 import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.utils.LinkBuilder;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
-
-
-import java.net.URI;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -30,51 +23,101 @@ public class MailNotificationServiceImpl implements MailNotificationService {
     @Value("${client.url}")
     private String clientUrl;
 
+
+    private String buildLink(String path, Map<String, String> params) {
+        return LinkBuilder.build(clientUrl, path, params);
+    }
+
     @Override
     public void sendVerificationMail(User user, String token, TokenType tokenType) {
-        String verificationLink = LinkBuilder.buildWithTokenAndType(clientUrl, "/verify", token, tokenType.name());
-        Map<String, Object> variables = Map.of(
-                "userName", user.getUserName(),
-                "confirmationLink", verificationLink
-        );
-        mailAsyncExecutor.sendEmailAsync("email-confirmation", "Confirm Your Email Address", user.getEmail(), variables);
+        String verificationLink = buildLink("/verify", Map.of(
+                "token", token,
+                "type", tokenType.name()
+        ));
+
+        EmailRequest emailRequest = EmailRequest.builder()
+                .template(EmailTemplate.EMAIL_CONFIRMATION)
+                .subject("Confirm Your Email Address")
+                .recipientEmail(user.getEmail())
+                .variables(Map.of(
+                        "displayName", user.getUserName(),
+                        "confirmationLink", verificationLink))
+                .build();
+        mailAsyncExecutor.sendEmailAsync(emailRequest);
     }
 
     @Override
     public void sendAuthorOnboardingMail(User user, String token, TokenType tokenType) {
-        String verificationLink = LinkBuilder.buildWithTokenAndType(clientUrl, "/onboard", token, tokenType.name());
-        Map<String, Object> variables = Map.of(
-                "userName", user.getUserName(),
-                "confirmationLink", verificationLink
-        );
-        mailAsyncExecutor.sendEmailAsync("author-onboarding", "Verify Your Author Account", user.getEmail(), variables);
+        String verificationLink = buildLink("/onboard", Map.of(
+                "token", token,
+                "type", tokenType.name()
+        ));
+
+        EmailRequest emailRequest = EmailRequest.builder()
+                .template(EmailTemplate.AUTHOR_ONBOARDING)
+                .subject("Verify Your Author Account")
+                .recipientEmail(user.getEmail())
+                .variables(Map.of(
+                        "displayName", user.getUserName(),
+                        "confirmationLink", verificationLink))
+                .build();
+        mailAsyncExecutor.sendEmailAsync(emailRequest);
     }
 
     @Override
     public void sendResetPasswordMail(User user, String token) {
-        String resetPasswordLink = LinkBuilder.buildWithToken(clientUrl, "/reset-password", token);
-        Map<String, Object> variables = Map.of(
-                "firstName", user.getFirstName(),
-                "resetPasswordLink", resetPasswordLink
-        );
-        mailAsyncExecutor.sendEmailAsync("reset-password", "Reset Your Password", user.getEmail(), variables);
+        String resetPasswordLink = buildLink("/reset-password", Map.of("token", token));
+
+        EmailRequest emailRequest = EmailRequest.builder()
+                .template(EmailTemplate.RESET_PASSWORD)
+                .subject("Reset Your Password")
+                .recipientEmail(user.getEmail())
+                .variables(Map.of(
+                        "displayName", user.getFirstName(),
+                        "resetPasswordLink", resetPasswordLink))
+                .build();
+        mailAsyncExecutor.sendEmailAsync(emailRequest);
     }
 
     @Override
     public void sendAdminInvitation(User user, String token, TokenType tokenType) {
-        Map<String, String> params = new HashMap<>();
-        params.put("token", token);
-        params.put("type", tokenType.name());
+        String link = buildLink("/invitation", Map.of(
+                "token", token,
+                "type", tokenType.name()));
 
-        String invitationLink = LinkBuilder.build(clientUrl, "/admin-invitation", params);
-        Map<String, Object> variables = Map.of(
-                "firstName", user.getFirstName(),
-                "invitationLink", invitationLink
-        );
-        mailAsyncExecutor.sendEmailAsync("admin-invitation", "Admin Invitation", user.getEmail(), variables);
+        EmailRequest emailRequest = EmailRequest.builder()
+                .template(EmailTemplate.ADMIN_INVITATION)
+                .subject("Invitation to Shep Blog")
+                .recipientEmail(user.getEmail())
+                .variables(Map.of(
+                        "invitationLink", link))
+                .build();
+        mailAsyncExecutor.sendEmailAsync(emailRequest);
     }
 }
 
+@Getter
+enum EmailTemplate {
+    EMAIL_CONFIRMATION("email-confirmation"),
+    AUTHOR_ONBOARDING("author-onboarding"),
+    RESET_PASSWORD("reset-password"),
+    ADMIN_INVITATION("admin-invitation");
+
+    private final String templateName;
+
+    EmailTemplate(String templateName) {
+        this.templateName = templateName;
+    }
+}
+
+@Builder
+@Getter
+class EmailRequest {
+    private final EmailTemplate template;
+    private final String subject;
+    private final String recipientEmail;
+    private final Map<String, Object> variables;
+}
 
 @Service
 @AllArgsConstructor
@@ -84,19 +127,17 @@ class MailAsyncExecutor{
     private final SpringTemplateEngine templateEngine;
 
     @Async("mailTaskExecutor")
-//    @Retryable(
-//        value = Exception.class,
-//        maxAttempts = 3,
-//        backoff = @Backoff(delay = 2000)
-//    )
-    public void sendEmailAsync(String templateName, String subject, String email, Map<String, Object> variables) {
+    public void sendEmailAsync(EmailRequest emailRequest) {
+        String email = emailRequest.getRecipientEmail();
+        String template = emailRequest.getTemplate().getTemplateName();
+
         try {
             Context context = new Context();
-            context.setVariables(variables);
-            String htmlContent = templateEngine.process(templateName, context);
-            mailSenderService.sendEmail(email, subject, htmlContent);
+            context.setVariables(emailRequest.getVariables());
+            String htmlContent = templateEngine.process(template, context);
+            mailSenderService.sendEmail(email, emailRequest.getSubject(), htmlContent);
         } catch (Exception e) {
-            log.error("==>> Failed to send email [{}] to {}: {}", templateName, email, e.getMessage(), e);
+            log.error("==>> Failed to send email [{}] to {}: {}", template, email, e.getMessage(), e);
             throw e;
         }
     }
