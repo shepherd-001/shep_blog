@@ -1,8 +1,10 @@
 package com.shepherd.shep_blog.services.notification;
 
+import com.shepherd.shep_blog.data.model.TokenType;
 import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.utils.LinkBuilder;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,7 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -28,13 +31,23 @@ public class MailNotificationServiceImpl implements MailNotificationService {
     private String clientUrl;
 
     @Override
-    public void sendVerificationMail(User user, String token) {
-        String verificationLink = LinkBuilder.buildWithToken(clientUrl, "/verify", token);
+    public void sendVerificationMail(User user, String token, TokenType tokenType) {
+        String verificationLink = LinkBuilder.buildWithTokenAndType(clientUrl, "/verify", token, tokenType.name());
         Map<String, Object> variables = Map.of(
                 "userName", user.getUserName(),
                 "confirmationLink", verificationLink
         );
         mailAsyncExecutor.sendEmailAsync("email-confirmation", "Confirm Your Email Address", user.getEmail(), variables);
+    }
+
+    @Override
+    public void sendAuthorOnboardingMail(User user, String token, TokenType tokenType) {
+        String verificationLink = LinkBuilder.buildWithTokenAndType(clientUrl, "/onboard", token, tokenType.name());
+        Map<String, Object> variables = Map.of(
+                "userName", user.getUserName(),
+                "confirmationLink", verificationLink
+        );
+        mailAsyncExecutor.sendEmailAsync("author-onboarding", "Verify Your Author Account", user.getEmail(), variables);
     }
 
     @Override
@@ -48,8 +61,12 @@ public class MailNotificationServiceImpl implements MailNotificationService {
     }
 
     @Override
-    public void sendAdminInvitation(User user, String token) {
-        String invitationLink = LinkBuilder.buildWithToken(clientUrl, "/admin-invitation", token);
+    public void sendAdminInvitation(User user, String token, TokenType tokenType) {
+        Map<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("type", tokenType.name());
+
+        String invitationLink = LinkBuilder.build(clientUrl, "/admin-invitation", params);
         Map<String, Object> variables = Map.of(
                 "firstName", user.getFirstName(),
                 "invitationLink", invitationLink
@@ -57,6 +74,7 @@ public class MailNotificationServiceImpl implements MailNotificationService {
         mailAsyncExecutor.sendEmailAsync("admin-invitation", "Admin Invitation", user.getEmail(), variables);
     }
 }
+
 
 @Service
 @AllArgsConstructor
@@ -66,6 +84,11 @@ class MailAsyncExecutor{
     private final SpringTemplateEngine templateEngine;
 
     @Async("mailTaskExecutor")
+//    @Retryable(
+//        value = Exception.class,
+//        maxAttempts = 3,
+//        backoff = @Backoff(delay = 2000)
+//    )
     public void sendEmailAsync(String templateName, String subject, String email, Map<String, Object> variables) {
         try {
             Context context = new Context();
@@ -74,6 +97,7 @@ class MailAsyncExecutor{
             mailSenderService.sendEmail(email, subject, htmlContent);
         } catch (Exception e) {
             log.error("==>> Failed to send email [{}] to {}: {}", templateName, email, e.getMessage(), e);
+            throw e;
         }
     }
 }

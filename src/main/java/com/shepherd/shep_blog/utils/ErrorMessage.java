@@ -7,6 +7,11 @@ public final class ErrorMessage {
     public static final String MISMATCH_PASSWORD = "Passwords do not match";
 
     public static final String USER_EMAIL_NOT_FOUND = "User with the provided email not found";
+    public static final String USER_EMAIL_ALREADY_EXISTS = "User with the provided email already exists";
+    public static final String USER_NAME_ALREADY_EXISTS = "The user name provided is taken";
+
+    public static final String INVALID_WEBSITE_ADDRESS = "Website address provided is invalid";
+
 
     private ErrorMessage() {
         throw new UnsupportedOperationException(NON_INSTANTIABLE_UTILITY_CLASS);

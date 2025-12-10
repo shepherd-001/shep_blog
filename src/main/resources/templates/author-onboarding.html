@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f9f4;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+        .email-container {
+            width: 100%;
+            background-color: #f4f9f4;
+            padding: 20px;
+        }
+        .email-content {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        .email-header {
+            text-align: center;
+            color: #333;
+        }
+        .email-header h1 {
+            margin: 0;
+            font-size: 6vw;
+            color: #4CAF50;
+        }
+        .greeting {
+            font-size: 4vw;
+            color: #333;
+            margin-top: 10px;
+        }
+        .intro-text {
+            font-size: 4vw;
+            color: #555;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+        .confirmation-link-container {
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: center;
+            margin-top: 20px;
+            border-radius: 6px;
+            font-size: 5vw;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 3.5vw;
+            color: #777;
+        }
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .btn {
+            display: inline-block;
+            width: auto;
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            font-size: 4.5vw;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        @media screen and (min-width: 600px) {
+            .email-header h1 {
+                font-size: 28px;
+            }
+            .greeting {
+                font-size: 18px;
+            }
+            .intro-text {
+                font-size: 16px;
+            }
+            .confirmation-link-container {
+                font-size: 18px;
+            }
+            .footer {
+                font-size: 14px;
+            }
+            .btn {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="email-content">
+        <div class="email-header">
+            <h1>Confirm Your Author Account</h1>
+            <p class="greeting">Hello <strong th:text="${userName}">[Author]</strong>,</p>
+        </div>
+
+        <p class="intro-text">
+            Welcome to <strong>Sheps Blog</strong>—a platform where powerful stories, insightful perspectives, and unique voices come together.
+            We're thrilled to have you join our growing community of talented authors.
+        </p>
+
+        <p class="intro-text">
+            Your words have the power to inspire, inform, and spark conversation. By becoming a Sheps Blog author, you're stepping into a space designed to help you create, share, and grow your reach.
+            From intuitive writing tools to a supportive audience, everything here is built to amplify your voice.
+        </p>
+
+        <p class="intro-text">
+            Before you can start publishing your articles and building your author profile, please confirm your email address below.
+        </p>
+
+        <p>Click the button to verify your author account:</p>
+
+        <div class="confirmation-link-container">
+            <a th:href="${confirmationLink}" class="btn">Verify Your Email</a>
+        </div>
+
+        <p class="intro-text">
+            If you did not sign up to be an author on Sheps Blog, you can safely ignore this message.
+        </p>
+
+        <div class="footer">
+            <p>
+                Need assistance? <a href="mailto:support@shepblog.com">Contact Support</a>.
+            </p>
+            <p>
+                With appreciation,<br>
+                The Sheps Blog Team
+            </p>
+
+            <p style="margin-top: 20px; color: #999; font-size: 13px;">
+                © <span th:text="${T(java.time.Year).now().value}">2025</span> Sheps Blog. All Rights Reserved.
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

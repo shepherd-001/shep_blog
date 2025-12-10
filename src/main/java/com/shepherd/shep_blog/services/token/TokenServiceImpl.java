@@ -25,6 +25,8 @@ public class TokenServiceImpl implements TokenService{
     private long emailConfirmationExpiration;
     @Value("${admin_invite_expiration}")
     private long adminInviteExpiration;
+    @Value("${author_onboarding_expiration}")
+    private long authorOnboardingExpiration;
 
 
     private long getExpirationTime(TokenType tokenType){
@@ -32,6 +34,7 @@ public class TokenServiceImpl implements TokenService{
             case RESET_PASSWORD -> resetPasswordExpiration;
             case EMAIL_CONFIRMATION -> emailConfirmationExpiration;
             case ADMIN_INVITATION -> adminInviteExpiration;
+            case AUTHOR_SIGN_UP ->  authorOnboardingExpiration;
         };
     }
 

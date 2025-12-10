@@ -86,6 +86,7 @@ mail_from_name: ${MAIL_FROM_NAME}
 reset_password_expiration: ${RESET_PASSWORD_EXPIRATION}
 email_confirmation_expiration: ${EMAIL_CONFIRMATION_EXPIRATION}
 admin_invite_expiration: ${ADMIN_INVITE_EXPIRATION}
+author_onboarding_expiration: ${AUTHOR_ONBOARDING_EXPIRATION}
 
 jwt:
   secret: ${JWT_SECRET_KEY}

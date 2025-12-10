@@ -25,6 +25,10 @@ public final class LinkBuilder {
         return build(url, path, Map.of("token", token));
     }
 
+    public static String buildWithTokenAndType(String url, String path, String token, String tokenType) {
+        return build(url, path, Map.of("token", token, "type", tokenType));
+    }
+
     private static String normalizeBaseUri(String url) {
         if (url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);

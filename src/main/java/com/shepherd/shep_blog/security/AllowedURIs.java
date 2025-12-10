@@ -4,6 +4,7 @@ public final class AllowedURIs {
     public static String[] allowedEndpoints() {
         return new String[]{
                 "/api/v1/user/signup/reader",
+                "/api/v1/user/signup/author",
 
                 "/api/v1/auth/verify",
                 "/api/v1/auth/login",
