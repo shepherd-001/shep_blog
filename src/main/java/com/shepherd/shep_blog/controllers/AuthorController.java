@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/author")
 public class AuthorController {
-//    private final AuthorService authorService;
+    private final AuthorService authorService;
 
+    @PostMapping("signup")
+    public ResponseEntity<ApiResponse<?>> registerAuthor(@Valid @RequestBody RegisterAuthorRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.success("User registered successfully", authorService.registerAuthor(request)));
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -55,18 +56,19 @@ public class GlobalExceptionHandler {
             BadCredentialsException.class,
             UserNotVerifiedException.class,
             UnauthorizedException.class,
-            AuthorizationDeniedException.class
+//            AuthorizationDeniedException.class,
+            DisabledException.class
     })
     public ResponseEntity<ApiResponse<?>> handleUnauthorized(Exception ex, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error(ex.getMessage(), request));
     }
 
-//    @ExceptionHandler(AuthorizationDeniedException.class)
-//    public ResponseEntity<ApiResponse<?>> handleException(AuthorizationDeniedException ex, HttpServletRequest request) {
-//        log.error("Authorization denied exception: {}", ex.getMessage());
-//        String errorMessage = "You are not authorized to access this resource";
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error(errorMessage, request));
-//    }
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiResponse<?>> handleException(AuthorizationDeniedException ex, HttpServletRequest request) {
+        log.error("Authorization denied exception: {}", ex.getMessage());
+        String errorMessage = "You are not authorized to access this resource";
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error(errorMessage, request));
+    }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiResponse<?>> handleException(HttpRequestMethodNotSupportedException ex, HttpServletRequest request) {

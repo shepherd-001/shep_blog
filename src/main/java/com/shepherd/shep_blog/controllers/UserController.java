@@ -1,6 +1,5 @@
 package com.shepherd.shep_blog.controllers;
 
-import com.shepherd.shep_blog.data.dto.request.RegisterAuthorRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterReaderRequest;
 import com.shepherd.shep_blog.data.dto.response.ApiResponse;
 import com.shepherd.shep_blog.services.user.UserService;
@@ -23,11 +22,5 @@ public class UserController {
     public ResponseEntity<ApiResponse<?>> registerReader(@Valid @RequestBody RegisterReaderRequest registerReaderRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.success("User registered successfully", userService.registerReader(registerReaderRequest)));
-    }
-
-    @PostMapping("signup/author")
-    public ResponseEntity<ApiResponse<?>> registerAuthor(@Valid @RequestBody RegisterAuthorRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.success("User registered successfully", userService.registerAuthor(request)));
     }
 }

@@ -1,6 +1,8 @@
 package com.shepherd.shep_blog.data.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.*;
 
 import java.util.ArrayList;

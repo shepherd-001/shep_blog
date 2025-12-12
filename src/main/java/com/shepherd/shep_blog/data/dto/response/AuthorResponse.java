@@ -8,6 +8,7 @@ import java.util.List;
 @Builder
 @Getter
 public class AuthorResponse {
+    private String authorId;
     private List<UserResponse> members;
     private String organizationPhoneNumber;
     private String websiteAddress;

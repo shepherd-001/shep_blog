@@ -1,6 +1,5 @@
 package com.shepherd.shep_blog.services.auth;
 
-import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.data.dto.request.ChangePasswordRequest;
 import com.shepherd.shep_blog.data.dto.request.LoginRequest;
 import com.shepherd.shep_blog.data.dto.request.ResetPasswordRequest;
@@ -13,6 +12,7 @@ import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.repository.UserRepository;
 import com.shepherd.shep_blog.exceptions.ResourceNotFoundException;
 import com.shepherd.shep_blog.exceptions.UserAlreadyEnabledException;
+import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.security.AuthenticatedUser;
 import com.shepherd.shep_blog.security.JwtUtils;
 import com.shepherd.shep_blog.security.SecurityUtils;

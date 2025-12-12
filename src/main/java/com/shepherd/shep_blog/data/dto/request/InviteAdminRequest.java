@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 public class InviteAdminRequest {
-    @NotEmpty(message = "At least one user email is required")
+    @NotEmpty(message = "At least one admin email is required")
     @Size(max = 10, message = "You can't invite more than 10 admins at once")
     private List<@NotBlank
     @Pattern(regexp = RegexPattern.EMAIL,

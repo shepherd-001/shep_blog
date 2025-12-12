@@ -1,9 +1,6 @@
 package com.shepherd.shep_blog.mapper;
 
-import com.shepherd.shep_blog.data.dto.request.RegisterAuthorRequest;
-import com.shepherd.shep_blog.data.model.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(config = MapConfig.class)
 public interface AuthorMapper {

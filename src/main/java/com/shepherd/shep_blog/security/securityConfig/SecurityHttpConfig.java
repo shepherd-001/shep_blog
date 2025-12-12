@@ -1,6 +1,5 @@
 package com.shepherd.shep_blog.security.securityConfig;
 
-
 import com.shepherd.shep_blog.security.AllowedURIs;
 import com.shepherd.shep_blog.security.CustomAuthenticationEntryPoint;
 import com.shepherd.shep_blog.security.CustomAuthorizationFilter;
@@ -18,7 +17,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -38,7 +36,6 @@ public class SecurityHttpConfig {
     private final CustomAuthorizationFilter authorizationFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final SecurityProperties securityProperties;
-    private final UserDetailsService userDetailsService;
 
 
     @Bean
@@ -74,6 +71,7 @@ public class SecurityHttpConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
     @Bean
     public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService,
                                                             PasswordEncoder passwordEncoder) {
