@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static com.shepherd.shep_blog.utils.ErrorMessage.TOKEN_IS_INVALID_OR_EXPIRED;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -58,6 +60,7 @@ public class TokenServiceImpl implements TokenService{
 
         TokenEntity tokenEntity = TokenEntity.builder()
                 .email(email)
+                .tokenType(tokenType)
                 .build();
 
         String key = tokenKey(tokenType, hashedToken);
@@ -81,13 +84,17 @@ public class TokenServiceImpl implements TokenService{
 
         TokenEntity tokenEntity = (TokenEntity) redisTemplate.opsForValue().get(key);
         if(tokenEntity == null){
-            throw new ShepTokenException("Token is invalid or expired");
+            throw new ShepTokenException(TOKEN_IS_INVALID_OR_EXPIRED);
+        }
+        else if(!tokenEntity.getTokenType().equals(tokenType)){
+            log.error("==>> Token entity type {} doesn't match token type {}", tokenEntity.getTokenType(), tokenType);
+            throw new ShepTokenException(TOKEN_IS_INVALID_OR_EXPIRED);
+        }
+        else if(!tokenEntity.getEmail().equalsIgnoreCase(expectedEmail.trim())){
+            log.error("==>> Invalid email for token");
+            throw new ShepTokenException(TOKEN_IS_INVALID_OR_EXPIRED);
         }
 
-        if(!tokenEntity.getEmail().equalsIgnoreCase(expectedEmail.trim())){
-            log.info("Invalid email for token");
-            throw new ShepTokenException("Token is invalid or expired");
-        }
         // auto invalidate token after successful use
         redisTemplate.delete(key);
         redisTemplate.opsForSet().remove(userTokenSetKey(tokenEntity.getEmail(), tokenType), key);

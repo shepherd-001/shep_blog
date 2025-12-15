@@ -33,6 +33,12 @@ public final class AppUtils {
             return false;
         }
     }
+
+    public static void validateNotBlank(String input, String message) {
+        if(input.isBlank()){
+            throw new IllegalArgumentException(message);
+        }
+    }
     private AppUtils() {
         throw new UnsupportedOperationException(NON_INSTANTIABLE_UTILITY_CLASS);
     }

@@ -12,6 +12,8 @@ public final class ErrorMessage {
 
     public static final String INVALID_WEBSITE_ADDRESS = "Website address provided is invalid";
     public static final String INVITATION_NOT_FOUND = "Invitation not found";
+    public static final String INVITATION_ALREADY_PROCESSED = "Invitation not found";
+    public static final String TOKEN_IS_INVALID_OR_EXPIRED = "Token is invalid or expired";
 
 
     private ErrorMessage() {

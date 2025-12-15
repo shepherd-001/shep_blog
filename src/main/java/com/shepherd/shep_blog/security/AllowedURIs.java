@@ -11,6 +11,9 @@ public final class AllowedURIs {
                 "/api/v1/auth/request-password-reset",
                 "/api/v1/auth/reset-password",
 
+                "/api/v1/admin/invite/accept",
+                "/api/v1/admin/invite/decline",
+
                 "/v2/api-docs",
                 "/v3/api-docs",
                 "/v3/api-docs/**",

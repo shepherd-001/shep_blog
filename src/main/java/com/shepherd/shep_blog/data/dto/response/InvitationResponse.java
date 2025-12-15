@@ -7,5 +7,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class InvitationResponse {
+    private String invitationId;
     private InvitationStatus status;
 }

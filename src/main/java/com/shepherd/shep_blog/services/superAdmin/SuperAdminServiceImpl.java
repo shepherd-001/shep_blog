@@ -12,6 +12,7 @@ import com.shepherd.shep_blog.exceptions.ShepBlogException;
 import com.shepherd.shep_blog.services.notification.MailNotificationService;
 import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
+import com.shepherd.shep_blog.utils.AppUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.shepherd.shep_blog.utils.ErrorMessage.INVITATION_NOT_FOUND;
 import static com.shepherd.shep_blog.utils.ErrorMessage.USER_EMAIL_ALREADY_EXISTS;
@@ -30,7 +33,6 @@ import static com.shepherd.shep_blog.utils.RoleUtil.SUPER_ADMIN;
 @Slf4j
 public class SuperAdminServiceImpl implements SuperAdminService {
     private final UserRepository userRepository;
-    private final AdminRepository  adminRepository;
     private final InvitationRepository invitationRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
@@ -64,7 +66,8 @@ public class SuperAdminServiceImpl implements SuperAdminService {
 
     @Override
 //    @Transactional
-    public String inviteAdmin(InviteAdminRequest inviteAdminRequest) {
+    public List<InvitationResponse> inviteAdmin(InviteAdminRequest inviteAdminRequest) {
+        List<InvitationResponse> invitationResponses = new ArrayList<>();
         for(String email : inviteAdminRequest.getAdminEmails()){
             email = email.trim();
             if(userRepository.existsByEmailEqualsIgnoreCase(email)){
@@ -82,13 +85,20 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                     .user(user)
                     .build();
 
-            invitationRepository.save(invitation);
+            invitation = invitationRepository.save(invitation);
+
+            invitationResponses.add(InvitationResponse.builder()
+                            .invitationId(invitation.getId())
+                            .status(InvitationStatus.PENDING)
+                    .build());
 
             TokenType tokenType = TokenType.ADMIN_INVITATION;
             String token = tokenService.generateToken(user.getEmail(), tokenType);
             mailNotificationService.sendAdminInvitation(user, token, tokenType);
         }
-        return "Admins invited successfully";
+
+        log.info("==>> {} admins invited",  invitationResponses.size());
+        return invitationResponses;
     }
 
     @Override
@@ -97,45 +107,14 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                 .orElseThrow(()-> new ResourceNotFoundException(INVITATION_NOT_FOUND));
 
         if(!invitation.getStatus().equals(InvitationStatus.PENDING)){
-            throw new ShepBlogException("Invitation can not be cancelled");
+            throw new ShepBlogException("Invitation cannot be cancelled");
         }
-        invitation.setStatus(InvitationStatus.CANCELLED);
-        invitation.setRespondedAt(Instant.now());
-        invitation = invitationRepository.save(invitation);
 
-        log.info("Invitation cancelled successfully");
+        invitationRepository.delete(invitation);
+
+        log.info("==>> Invitation '{}' cancelled successfully", inviteId);
         return InvitationResponse.builder()
-                .status(invitation.getStatus())
+                .status(InvitationStatus.CANCELLED)
                 .build();
     }
 }
-
-//@Modifying
-//@Query("""
-//    UPDATE Invitation i
-//    SET i.status = :newStatus
-//    WHERE i.id = :id AND i.status = :requiredStatus
-//""")
-//int updateStatus(
-//    @Param("id") String id,
-//    @Param("requiredStatus") InvitationStatus requiredStatus,
-//    @Param("newStatus") InvitationStatus newStatus
-//);
-
-//@Override
-//@Transactional
-//public InvitationResponse cancelInvitation(String invitationId) {
-//    int updated = invitationRepository.updateStatus(
-//            invitationId,
-//            InvitationStatus.PENDING,
-//            InvitationStatus.CANCELLED
-//    );
-//
-//    if (updated == 0) {
-//        throw new ShepBlogException("Invitation cannot be cancelled");
-//    }
-//
-//    return InvitationResponse.builder()
-//            .status(InvitationStatus.CANCELLED)
-//            .build();
-//}
