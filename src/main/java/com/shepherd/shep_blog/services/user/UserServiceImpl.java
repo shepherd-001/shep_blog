@@ -20,6 +20,8 @@ import com.shepherd.shep_blog.utils.pagination_utils.PageMapper;
 import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,7 +49,7 @@ public class UserServiceImpl implements UserService {
     private final TokenService tokenService;
     private final RoleService roleService;
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("firstName", "lastName",
-            "userName", "email", "gender");
+            "userName", "email", "gender", "createdAt");
 
 
     @Override
@@ -87,9 +89,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageResponse<UserResponse> getAllEnabledUser(boolean enabled, PaginationRequest paginationRequest) {
-        paginationRequest.setAllowedSortFields(ALLOWED_SORT_FIELDS);
-        Pageable pageable = PageRequestFactory.create(paginationRequest);
+    public PageResponse<UserResponse> getAllEnabledUser(boolean enabled, PaginationRequest request) {
+        Pageable pageable = PageRequestFactory.create(request, ALLOWED_SORT_FIELDS);
         Page<User> users = userRepository.findAllByEnabled(enabled, pageable);
         log.info("==>> Fetching all user: enabled -> '{}'", enabled);
         return PageMapper.map(users, userMapper::mapToUserResponse);
