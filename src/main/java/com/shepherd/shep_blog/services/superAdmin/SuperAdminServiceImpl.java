@@ -45,7 +45,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
 
     public void createSuperAdminIfNotExists() {
         if(userRepository.existsByRoleName(SUPER_ADMIN)){
-            log.info("Super admin already exists");
+            log.info("==>> Super admin already exists");
             return;
         }
         UserRole role = roleService.getRole(SUPER_ADMIN);
@@ -61,7 +61,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                 .build();
 
         userRepository.save(admin);
-        log.info("Super admin created successfully");
+        log.info("==>> Super admin created successfully");
     }
 
     @Override

@@ -21,6 +21,7 @@ public class Author extends BaseEntity {
 
     private String organizationPhoneNumber;
     private String websiteAddress;
+    private String approvedBy;
 
     public void addMember(Member member) {
         members.add(member);

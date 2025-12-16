@@ -5,6 +5,7 @@ import com.shepherd.shep_blog.data.dto.request.LoginRequest;
 import com.shepherd.shep_blog.data.dto.request.ResetPasswordRequest;
 import com.shepherd.shep_blog.data.dto.request.VerifyEmailRequest;
 import com.shepherd.shep_blog.data.dto.response.AuthResponse;
+import com.shepherd.shep_blog.data.dto.response.UserResponse;
 import com.shepherd.shep_blog.data.dto.response.VerifyEmailResponse;
 
 public interface AuthService {
@@ -13,4 +14,5 @@ public interface AuthService {
     AuthResponse changePassword(ChangePasswordRequest changePasswordRequest);
     String requestPasswordReset(String email);
     AuthResponse resetPassword(ResetPasswordRequest resetPasswordRequest);
+    UserResponse getAuthenticatedUser();
 }

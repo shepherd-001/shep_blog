@@ -60,6 +60,11 @@ public class AuthController {
                 .success("Password reset successful", authService.resetPassword(resetPasswordRequest)));
     }
 
+    @GetMapping("/user-detail")
+    public ResponseEntity<ApiResponse<?>> viewUserDetails(){
+        return ResponseEntity.ok(ApiResponse.success(authService.getAuthenticatedUser()));
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<?>> logoutCurrentSession(HttpServletRequest request) {
         logoutService.logoutCurrentSession(request);

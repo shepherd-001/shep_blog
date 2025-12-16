@@ -1,7 +1,10 @@
 package com.shepherd.shep_blog.services.user;
 
+import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterReaderRequest;
+import com.shepherd.shep_blog.data.dto.response.PageResponse;
 import com.shepherd.shep_blog.data.dto.response.RegisterUserResponse;
+import com.shepherd.shep_blog.data.dto.response.UserResponse;
 import com.shepherd.shep_blog.data.model.Reader;
 import com.shepherd.shep_blog.data.model.TokenType;
 import com.shepherd.shep_blog.data.model.User;
@@ -13,11 +16,20 @@ import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.services.notification.MailNotificationService;
 import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
+import com.shepherd.shep_blog.utils.pagination_utils.PageMapper;
+import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static com.shepherd.shep_blog.utils.ErrorMessage.USER_EMAIL_ALREADY_EXISTS;
 import static com.shepherd.shep_blog.utils.ErrorMessage.USER_NAME_ALREADY_EXISTS;
@@ -34,6 +46,8 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final TokenService tokenService;
     private final RoleService roleService;
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("firstName", "lastName",
+            "userName", "email", "gender");
 
 
     @Override
@@ -70,5 +84,14 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsByUserNameEqualsIgnoreCase(username.trim())) {
             throw new AlreadyExistsException(USER_NAME_ALREADY_EXISTS);
         }
+    }
+
+    @Override
+    public PageResponse<UserResponse> getAllEnabledUser(boolean enabled, PaginationRequest paginationRequest) {
+        paginationRequest.setAllowedSortFields(ALLOWED_SORT_FIELDS);
+        Pageable pageable = PageRequestFactory.create(paginationRequest);
+        Page<User> users = userRepository.findAllByEnabled(enabled, pageable);
+        log.info("==>> Fetching all user: enabled -> '{}'", enabled);
+        return PageMapper.map(users, userMapper::mapToUserResponse);
     }
 }

@@ -5,6 +5,7 @@ import com.shepherd.shep_blog.data.dto.request.LoginRequest;
 import com.shepherd.shep_blog.data.dto.request.ResetPasswordRequest;
 import com.shepherd.shep_blog.data.dto.request.VerifyEmailRequest;
 import com.shepherd.shep_blog.data.dto.response.AuthResponse;
+import com.shepherd.shep_blog.data.dto.response.UserResponse;
 import com.shepherd.shep_blog.data.dto.response.VerifyEmailResponse;
 import com.shepherd.shep_blog.data.model.TokenEntity;
 import com.shepherd.shep_blog.data.model.TokenType;
@@ -133,6 +134,12 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
         log.info("==>> Password reset successful for user {}", user.getEmail());
         return generateJwtToken(user);
+    }
+
+    @Override
+    public UserResponse getAuthenticatedUser() {
+        User user = SecurityUtils.getCurrentPrincipal().getUser();
+        return userMapper.mapToUserResponse(user);
     }
 
     private User getUserByEmail(String email) {
