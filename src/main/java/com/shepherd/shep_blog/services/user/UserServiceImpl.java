@@ -2,7 +2,7 @@ package com.shepherd.shep_blog.services.user;
 
 import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterReaderRequest;
-import com.shepherd.shep_blog.data.dto.response.PageResponse;
+import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
 import com.shepherd.shep_blog.data.dto.response.RegisterUserResponse;
 import com.shepherd.shep_blog.data.dto.response.UserResponse;
 import com.shepherd.shep_blog.data.model.Reader;
@@ -20,17 +20,12 @@ import com.shepherd.shep_blog.utils.pagination_utils.PageMapper;
 import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import static com.shepherd.shep_blog.utils.ErrorMessage.USER_EMAIL_ALREADY_EXISTS;
@@ -89,7 +84,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageResponse<UserResponse> getAllEnabledUser(boolean enabled, PaginationRequest request) {
+    public PaginationResponse<UserResponse> getAllEnabledUser(boolean enabled, PaginationRequest request) {
         Pageable pageable = PageRequestFactory.create(request, ALLOWED_SORT_FIELDS);
         Page<User> users = userRepository.findAllByEnabled(enabled, pageable);
         log.info("==>> Fetching all user: enabled -> '{}'", enabled);

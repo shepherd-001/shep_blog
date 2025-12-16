@@ -1,7 +1,10 @@
 package com.shepherd.shep_blog.services.author;
 
+import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterAuthorRequest;
 import com.shepherd.shep_blog.data.dto.response.AuthorResponse;
+import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
+import com.shepherd.shep_blog.data.dto.response.UserResponse;
 import com.shepherd.shep_blog.data.model.*;
 import com.shepherd.shep_blog.data.repository.AuthorRepository;
 import com.shepherd.shep_blog.mapper.UserMapper;
@@ -10,12 +13,17 @@ import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.user.UserService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
 import com.shepherd.shep_blog.utils.AppUtils;
+import com.shepherd.shep_blog.utils.pagination_utils.PageMapper;
+import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.shepherd.shep_blog.utils.ErrorMessage.INVALID_WEBSITE_ADDRESS;
 import static com.shepherd.shep_blog.utils.RoleUtil.SUPER_AUTHOR;
@@ -32,6 +40,7 @@ public class AuthorServiceImpl implements AuthorService{
     private final UserMapper userMapper;
     private final TokenService tokenService;
     private final MailNotificationService notificationService;
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("organizationPhoneNumber", "createdAt");
 
     @Override
     public AuthorResponse registerAuthor(RegisterAuthorRequest request) {
@@ -76,5 +85,13 @@ public class AuthorServiceImpl implements AuthorService{
                 .organizationPhoneNumber(author.getOrganizationPhoneNumber())
                 .websiteAddress(author.getWebsiteAddress())
                 .build();
+    }
+
+    @Override
+    public PaginationResponse<AuthorResponse> getAllAuthor(PaginationRequest request) {
+        Pageable pageable = PageRequestFactory.create(request, ALLOWED_SORT_FIELDS);
+        Page<Author> authors = authorRepository.findAll(pageable);
+        log.info("==>> Fetching all authors");
+        return PageMapper.map(authors, this::buildAuthorResponse);
     }
 }

@@ -3,7 +3,6 @@ package com.shepherd.shep_blog.services.superAdmin;
 import com.shepherd.shep_blog.data.dto.request.InviteAdminRequest;
 import com.shepherd.shep_blog.data.dto.response.InvitationResponse;
 import com.shepherd.shep_blog.data.model.*;
-import com.shepherd.shep_blog.data.repository.AdminRepository;
 import com.shepherd.shep_blog.data.repository.InvitationRepository;
 import com.shepherd.shep_blog.data.repository.UserRepository;
 import com.shepherd.shep_blog.exceptions.AlreadyExistsException;
@@ -12,14 +11,12 @@ import com.shepherd.shep_blog.exceptions.ShepBlogException;
 import com.shepherd.shep_blog.services.notification.MailNotificationService;
 import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
-import com.shepherd.shep_blog.utils.AppUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -7,7 +7,7 @@ import java.util.List;
 
 @Builder
 @Getter
-public class PageResponse<T> {
+public class PaginationResponse<T> {
     private final List<T> content;
     private final int pageNumber; // 1 based.
     private final int pageSize;

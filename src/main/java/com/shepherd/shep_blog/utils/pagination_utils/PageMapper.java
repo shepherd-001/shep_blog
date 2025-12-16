@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.utils.pagination_utils;
 
-import com.shepherd.shep_blog.data.dto.response.PageResponse;
+import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
 import com.shepherd.shep_blog.utils.ErrorMessage;
 import org.springframework.data.domain.Page;
 
@@ -10,11 +10,11 @@ import java.util.function.Function;
 
 public final class PageMapper {
 
-    public static <S, T> PageResponse<T> map(Page<S> page, Function<S, T> mapper) {
+    public static <S, T> PaginationResponse<T> map(Page<S> page, Function<S, T> mapper) {
         List<T> content = page.isEmpty()
                 ? Collections.emptyList()
                 : page.stream().map(mapper).toList();
-        return PageResponse.<T>builder()
+        return PaginationResponse.<T>builder()
                 .content(content)
                 .pageNumber(page.getNumber() + 1) // 1 based page number
                 .pageSize(page.getSize())
@@ -27,8 +27,8 @@ public final class PageMapper {
                 .build();
     }
 
-    public static <T> PageResponse<T> map(Page<T> page) {
-        return PageResponse.<T>builder()
+    public static <T> PaginationResponse<T> map(Page<T> page) {
+        return PaginationResponse.<T>builder()
                 .content(page.getContent())
                 .pageNumber(page.getNumber() + 1) // 1 based page number
                 .pageSize(page.getSize())
