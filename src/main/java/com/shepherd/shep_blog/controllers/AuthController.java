@@ -1,9 +1,6 @@
 package com.shepherd.shep_blog.controllers;
 
-import com.shepherd.shep_blog.data.dto.request.ChangePasswordRequest;
-import com.shepherd.shep_blog.data.dto.request.LoginRequest;
-import com.shepherd.shep_blog.data.dto.request.ResetPasswordRequest;
-import com.shepherd.shep_blog.data.dto.request.VerifyEmailRequest;
+import com.shepherd.shep_blog.data.dto.request.*;
 import com.shepherd.shep_blog.data.dto.response.ApiResponse;
 import com.shepherd.shep_blog.security.LogoutService;
 import com.shepherd.shep_blog.services.auth.AuthService;
@@ -66,9 +63,9 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<?>> refreshToken(@RequestParam String refreshToken){
+    public ResponseEntity<ApiResponse<?>> refreshToken(@Valid @RequestBody RefreshTokenRequest request){
         return ResponseEntity.ok(ApiResponse.success("Auth token refreshed successfully",
-                authService.refreshToken(refreshToken)));
+                authService.refreshToken(request.getRefreshToken())));
     }
 
     @PostMapping("/logout")

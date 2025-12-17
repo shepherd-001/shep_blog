@@ -139,6 +139,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserResponse getAuthenticatedUser() {
         User user = SecurityUtils.getCurrentPrincipal().getUser();
+        log.info("==>> Authenticated user: {}", user.getEmail());
         return userMapper.mapToUserResponse(user);
     }
 
@@ -157,10 +158,11 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String email = jwtUtils.extractUsername(refreshToken);
-        User user = getUserByEmail(email);
-
         jwtTokenService.revokeRefreshToken(refreshToken);
 
+        User user = getUserByEmail(email);
+
+        log.info("==>> Auth token refreshed for '{}'", email);
         return generateJwtToken(user);
     }
 }
