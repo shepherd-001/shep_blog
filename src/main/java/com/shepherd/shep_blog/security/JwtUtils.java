@@ -1,5 +1,6 @@
 package com.shepherd.shep_blog.security;
 
+import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.exceptions.InvalidJwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -31,6 +32,7 @@ public class JwtUtils {
     @Value("${jwt.issuer}")
     private String issuer;
     private static final String TOKEN_TYPE = "tokenType";
+    private static final String ROLE = "role";
 
 
     @PostConstruct
@@ -58,14 +60,16 @@ public class JwtUtils {
         }
     }
 
-    public String generateAccessToken(String email){
-        Map<String, Object> claims = Map.of(TOKEN_TYPE, "access");
-        return buildJwtToken(claims, email, accessTokenExpiration);
+    public String generateAccessToken(User user){
+        Map<String, Object> claims = Map.of(TOKEN_TYPE, "access",
+                ROLE, user.getRole().getName());
+        return buildJwtToken(claims, user.getEmail(), accessTokenExpiration);
     }
 
-    public String generateRefreshToken(String email){
-        Map<String, Object> claims = Map.of(TOKEN_TYPE, "refresh");
-        return buildJwtToken(claims, email, refreshTokenExpiration);
+    public String generateRefreshToken(User user){
+        Map<String, Object> claims = Map.of(TOKEN_TYPE, "refresh",
+                ROLE, user.getRole().getName());
+        return buildJwtToken(claims, user.getEmail(), refreshTokenExpiration);
     }
 
     private String buildJwtToken(Map<String, Object> claims, String email, long tokenExpiration){
@@ -73,9 +77,9 @@ public class JwtUtils {
         return Jwts.builder()
                 .issuer(issuer)
                 .id(UUID.randomUUID().toString()) // jwtId
-                .issuedAt(Date.from(now))
-                .claims(claims)
                 .subject(email)
+                .claims(claims)
+                .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(tokenExpiration)))
                 .signWith(signingKey)
                 .compact();
@@ -99,5 +103,14 @@ public class JwtUtils {
 
     public String getJwtId(String token){
         return extractAllClaims(token).getId();
+    }
+
+    public void validateRefreshToken(String refreshToken){
+        Claims claims = extractAllClaims(refreshToken);
+
+        String tokenType = claims.get(TOKEN_TYPE, String.class);
+        if(!"refresh".equals(tokenType)){
+            throw new InvalidJwtException("Invalid refresh token");
+        }
     }
 }

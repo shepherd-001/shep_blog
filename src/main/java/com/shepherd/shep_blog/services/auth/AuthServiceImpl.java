@@ -76,8 +76,8 @@ public class AuthServiceImpl implements AuthService {
 
     private AuthResponse generateJwtToken(User user) {
         String userEmail = user.getEmail();
-        String accessToken = jwtUtils.generateAccessToken(userEmail);
-        String refreshToken = jwtUtils.generateRefreshToken(userEmail);
+        String accessToken = jwtUtils.generateAccessToken(user);
+        String refreshToken = jwtUtils.generateRefreshToken(user);
 
         jwtTokenService.storeAccessToken(jwtUtils.getJwtId(accessToken), userEmail);
         jwtTokenService.storeRefreshToken(refreshToken, userEmail);
@@ -145,5 +145,22 @@ public class AuthServiceImpl implements AuthService {
     private User getUserByEmail(String email) {
         return userRepository.findByEmailEqualsIgnoreCase(email.trim()).orElseThrow(
                 ()-> new ResourceNotFoundException(USER_EMAIL_NOT_FOUND));
+    }
+
+    @Override
+    @Transactional
+    public AuthResponse refreshToken(String refreshToken) {
+        jwtUtils.validateRefreshToken(refreshToken);
+
+        if(!jwtTokenService.isRefreshTokenValid(refreshToken)){
+            throw new BadCredentialsException("Refresh token revoked or expired");
+        }
+
+        String email = jwtUtils.extractUsername(refreshToken);
+        User user = getUserByEmail(email);
+
+        jwtTokenService.revokeRefreshToken(refreshToken);
+
+        return generateJwtToken(user);
     }
 }

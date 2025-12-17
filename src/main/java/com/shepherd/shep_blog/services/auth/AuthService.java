@@ -15,4 +15,5 @@ public interface AuthService {
     String requestPasswordReset(String email);
     AuthResponse resetPassword(ResetPasswordRequest resetPasswordRequest);
     UserResponse getAuthenticatedUser();
+    AuthResponse refreshToken(String refreshToken);
 }
