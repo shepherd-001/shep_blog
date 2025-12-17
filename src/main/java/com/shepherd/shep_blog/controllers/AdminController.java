@@ -2,17 +2,16 @@ package com.shepherd.shep_blog.controllers;
 
 import com.shepherd.shep_blog.data.dto.request.AcceptInviteRequest;
 import com.shepherd.shep_blog.data.dto.request.DeclineInviteRequest;
+import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.response.ApiResponse;
 import com.shepherd.shep_blog.services.admin.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,4 +32,9 @@ public class AdminController {
                 .success("Invitation declined successfully", adminService.declineInvitation(declineInviteRequest)));
     }
 
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<?> getAllActiveAdmins(@RequestBody PaginationRequest paginationRequest) {
+        return ResponseEntity.ok(ApiResponse.success(adminService.getAllActiveAdmins(paginationRequest)));
+    }
 }

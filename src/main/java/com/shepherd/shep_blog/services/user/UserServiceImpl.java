@@ -66,6 +66,7 @@ public class UserServiceImpl implements UserService {
         TokenType tokenType = TokenType.EMAIL_CONFIRMATION;
         String token = tokenService.generateToken(user.getEmail(), tokenType);
         notificationService.sendVerificationMail(user, token, tokenType);
+        log.info("==>> New reader registered");
         return userMapper.mapToRegisterReaderResponse(user);
     }
 

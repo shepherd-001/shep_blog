@@ -31,7 +31,7 @@ public class JwtUtils {
     private long refreshTokenExpiration;
     @Value("${jwt.issuer}")
     private String issuer;
-    private static final String TOKEN_TYPE = "tokenType";
+    private static final String TOKEN_TYPE = "token_type";
     private static final String ROLE = "role";
 
 

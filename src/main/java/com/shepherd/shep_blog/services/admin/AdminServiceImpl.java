@@ -1,21 +1,31 @@
 package com.shepherd.shep_blog.services.admin;
 
+import com.shepherd.shep_blog.data.dto.AdminResponse;
 import com.shepherd.shep_blog.data.dto.request.AcceptInviteRequest;
 import com.shepherd.shep_blog.data.dto.request.DeclineInviteRequest;
+import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.response.InvitationResponse;
+import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
 import com.shepherd.shep_blog.data.model.*;
 import com.shepherd.shep_blog.data.repository.AdminRepository;
 import com.shepherd.shep_blog.data.repository.InvitationRepository;
 import com.shepherd.shep_blog.exceptions.ResourceNotFoundException;
 import com.shepherd.shep_blog.exceptions.UnauthorizedException;
+import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
 import com.shepherd.shep_blog.utils.RoleUtil;
+import com.shepherd.shep_blog.utils.pagination_utils.PageMapper;
+import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 import static com.shepherd.shep_blog.utils.ErrorMessage.INVITATION_ALREADY_PROCESSED;
 
@@ -29,6 +39,7 @@ public class AdminServiceImpl implements AdminService{
     private final InvitationRepository  invitationRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
+    private final UserMapper userMapper;
 
     @Override
     public InvitationResponse declineInvitation(DeclineInviteRequest request) {
@@ -72,6 +83,20 @@ public class AdminServiceImpl implements AdminService{
         invitationRepository.delete(invitation);
         return InvitationResponse.builder()
                 .status(InvitationStatus.ACCEPTED)
+                .build();
+    }
+
+    @Override
+    public PaginationResponse<AdminResponse> getAllActiveAdmins(PaginationRequest request) {
+        Pageable pageable = PageRequestFactory.create(request, Set.of("createdBy"));
+        Page<Admin> admins = adminRepository.findAllActiveAdmins(pageable);
+        return PageMapper.map(admins, this::buildAdminResponse);
+    }
+
+    private AdminResponse buildAdminResponse(Admin admin){
+        return AdminResponse.builder()
+                .user(userMapper
+                        .mapToUserResponse(admin.getUser()))
                 .build();
     }
 
