@@ -1,4 +1,4 @@
-package com.shepherd.shep_blog.security.securityConfig;
+package com.shepherd.shep_blog.security.security_config;
 
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;

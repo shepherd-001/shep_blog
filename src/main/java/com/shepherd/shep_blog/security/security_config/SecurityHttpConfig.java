@@ -1,4 +1,4 @@
-package com.shepherd.shep_blog.security.securityConfig;
+package com.shepherd.shep_blog.security.security_config;
 
 import com.shepherd.shep_blog.security.AllowedURIs;
 import com.shepherd.shep_blog.security.CustomAuthenticationEntryPoint;
@@ -21,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -52,9 +53,16 @@ public class SecurityHttpConfig {
                                 .anyRequest().authenticated())
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000) // 1 year
+                                .preload(true))
+                        .referrerPolicy(referrerPolicy -> referrerPolicy.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
+                        .addHeaderWriter((request, response) -> response.setHeader("Permissions-Policy", "camera=(self), microphone=(self)"))
                         .xssProtection(Customizer.withDefaults())
-                        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny))
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
+                        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; script-src 'self' 'strict-dynamic'; object-src 'none'; base-uri 'self';"))
+                )
                 .build();
     }
 
