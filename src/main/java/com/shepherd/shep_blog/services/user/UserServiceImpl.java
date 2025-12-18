@@ -6,7 +6,7 @@ import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
 import com.shepherd.shep_blog.data.dto.response.RegisterUserResponse;
 import com.shepherd.shep_blog.data.dto.response.UserResponse;
 import com.shepherd.shep_blog.data.model.Reader;
-import com.shepherd.shep_blog.data.model.TokenType;
+import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.model.UserRole;
 import com.shepherd.shep_blog.data.repository.ReaderRepository;
@@ -66,7 +66,6 @@ public class UserServiceImpl implements UserService {
         TokenType tokenType = TokenType.EMAIL_CONFIRMATION;
         String token = tokenService.generateToken(user.getEmail(), tokenType);
         notificationService.sendVerificationMail(user, token, tokenType);
-        log.info("==>> New reader registered");
         return userMapper.mapToRegisterReaderResponse(user);
     }
 

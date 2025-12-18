@@ -1,5 +1,6 @@
 package com.shepherd.shep_blog.data.model;
 
+import com.shepherd.shep_blog.data.model.enums.TokenType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;

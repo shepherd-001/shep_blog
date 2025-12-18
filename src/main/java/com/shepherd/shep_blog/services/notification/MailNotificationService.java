@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.services.notification;
 
-import com.shepherd.shep_blog.data.model.TokenType;
+import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.model.User;
 
 public interface MailNotificationService {

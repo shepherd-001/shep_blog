@@ -6,17 +6,16 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Builder
+@Table(indexes = @Index(name = "idx_tag_name", columnList = "name"))
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Reader extends BaseEntity {
+@Builder
+public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    private String name;
+    private String slug;
 }

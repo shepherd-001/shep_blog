@@ -7,6 +7,8 @@ import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.response.InvitationResponse;
 import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
 import com.shepherd.shep_blog.data.model.*;
+import com.shepherd.shep_blog.data.model.enums.InvitationStatus;
+import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.repository.AdminRepository;
 import com.shepherd.shep_blog.data.repository.InvitationRepository;
 import com.shepherd.shep_blog.exceptions.ResourceNotFoundException;
@@ -90,6 +92,7 @@ public class AdminServiceImpl implements AdminService{
     public PaginationResponse<AdminResponse> getAllActiveAdmins(PaginationRequest request) {
         Pageable pageable = PageRequestFactory.create(request, Set.of("createdBy"));
         Page<Admin> admins = adminRepository.findAllActiveAdmins(pageable);
+        log.info("==>> Fetching all admins");
         return PageMapper.map(admins, this::buildAdminResponse);
     }
 

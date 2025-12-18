@@ -8,7 +8,7 @@ import com.shepherd.shep_blog.data.dto.response.AuthResponse;
 import com.shepherd.shep_blog.data.dto.response.UserResponse;
 import com.shepherd.shep_blog.data.dto.response.VerifyEmailResponse;
 import com.shepherd.shep_blog.data.model.TokenEntity;
-import com.shepherd.shep_blog.data.model.TokenType;
+import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.repository.UserRepository;
 import com.shepherd.shep_blog.exceptions.ResourceNotFoundException;

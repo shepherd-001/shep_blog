@@ -1,7 +1,10 @@
 package com.shepherd.shep_blog.data.model;
 
+import com.shepherd.shep_blog.data.model.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
@@ -15,6 +18,9 @@ import lombok.*;
         @Index(name = "idx_createdAt", columnList = "createdAt")
 })
 public class User extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private String firstName;
     private String lastName;
     @Column(unique = true)

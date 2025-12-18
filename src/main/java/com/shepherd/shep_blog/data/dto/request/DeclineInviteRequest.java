@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.data.dto.request;
 
-import com.shepherd.shep_blog.data.model.TokenType;
+import com.shepherd.shep_blog.data.model.enums.TokenType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

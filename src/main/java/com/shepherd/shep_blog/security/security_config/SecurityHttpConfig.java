@@ -58,10 +58,12 @@ public class SecurityHttpConfig {
                                 .maxAgeInSeconds(31536000) // 1 year
                                 .preload(true))
                         .referrerPolicy(referrerPolicy -> referrerPolicy.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
-                        .addHeaderWriter((request, response) -> response.setHeader("Permissions-Policy", "camera=(self), microphone=(self)"))
+                        .addHeaderWriter((request, response) ->
+                                response.setHeader("Permissions-Policy", "camera=(self), microphone=(self)"))
                         .xssProtection(Customizer.withDefaults())
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
-                        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; script-src 'self' 'strict-dynamic'; object-src 'none'; base-uri 'self';"))
+                        .contentSecurityPolicy(csp ->
+                                csp.policyDirectives("default-src 'self'; script-src 'self' 'strict-dynamic'; object-src 'none'; base-uri 'self';"))
                 )
                 .build();
     }

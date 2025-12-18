@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.data.dto.response;
 
-import com.shepherd.shep_blog.data.model.Gender;
+import com.shepherd.shep_blog.data.model.enums.Gender;
 import lombok.Builder;
 import lombok.Getter;
 

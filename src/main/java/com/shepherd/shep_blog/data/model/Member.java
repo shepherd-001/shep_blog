@@ -3,6 +3,8 @@ package com.shepherd.shep_blog.data.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Builder
 @AllArgsConstructor
@@ -12,7 +14,7 @@ import lombok.*;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "app_user_id", nullable = false, unique = true)

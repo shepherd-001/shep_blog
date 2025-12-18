@@ -24,7 +24,7 @@ public class AuthorController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'READER')")
     public ResponseEntity<ApiResponse<?>> getAllAuthors(@RequestBody PaginationRequest paginationRequest){
         return ResponseEntity.ok(ApiResponse
                 .success(authorService.getAllAuthor(paginationRequest)));
