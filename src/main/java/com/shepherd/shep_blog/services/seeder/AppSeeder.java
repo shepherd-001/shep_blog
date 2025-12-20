@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.services.seeder;
 
-import com.shepherd.shep_blog.services.superAdmin.SuperAdminService;
+import com.shepherd.shep_blog.services.super_admin.SuperAdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

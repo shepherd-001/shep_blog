@@ -2,7 +2,7 @@ package com.shepherd.shep_blog.controllers;
 
 import com.shepherd.shep_blog.data.dto.request.InviteAdminRequest;
 import com.shepherd.shep_blog.data.dto.response.ApiResponse;
-import com.shepherd.shep_blog.services.superAdmin.SuperAdminService;
+import com.shepherd.shep_blog.services.super_admin.SuperAdminService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;

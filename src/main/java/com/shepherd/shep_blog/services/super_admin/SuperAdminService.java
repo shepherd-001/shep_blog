@@ -1,4 +1,4 @@
-package com.shepherd.shep_blog.services.superAdmin;
+package com.shepherd.shep_blog.services.super_admin;
 
 import com.shepherd.shep_blog.data.dto.request.InviteAdminRequest;
 import com.shepherd.shep_blog.data.dto.response.InvitationResponse;

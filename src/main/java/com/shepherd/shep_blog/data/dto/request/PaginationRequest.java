@@ -63,14 +63,17 @@ public class PaginationRequest {
         }
     }
 
-//    public String toCacheKey(String prefix, Set<String> allowedSortFields) {
-//        return String.format(
-//                "%s:page:%d:size:%d:sort:%s:%s",
-//                prefix,
-//                resolvedPageNumber(),
-//                resolvedPageSize(),
-//                resolvedSortField(allowedSortFields),
-//                resolvedSortDirection().name()
-//        );
-//    }
+    public String toCacheKey(String prefix) {
+        String sortField = (sortBy == null || sortBy.isBlank())
+                ? PageRequestFactory.DEFAULT_SORT_FIELD
+                : sortBy.trim();
+        return String.format(
+                "%s:page:%d:size:%d:sort:%s:%s",
+                prefix,
+                resolvedPageNumber(),
+                resolvedPageSize(),
+                sortField,
+                resolvedSortDirection().name()
+        );
+    }
 }

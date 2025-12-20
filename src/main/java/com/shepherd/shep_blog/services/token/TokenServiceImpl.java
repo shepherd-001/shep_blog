@@ -1,5 +1,6 @@
 package com.shepherd.shep_blog.services.token;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shepherd.shep_blog.data.model.TokenEntity;
 import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.exceptions.ShepTokenException;
@@ -21,6 +22,7 @@ import static com.shepherd.shep_blog.utils.ErrorMessage.TOKEN_IS_INVALID_OR_EXPI
 @Slf4j
 public class TokenServiceImpl implements TokenService{
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
     @Value("${reset_password_expiration}")
     private long resetPasswordExpiration;
     @Value("${email_confirmation_expiration}")
@@ -82,7 +84,9 @@ public class TokenServiceImpl implements TokenService{
         String hashedToken = HashUtils.sha256(token);
         String key = tokenKey(tokenType, hashedToken);
 
-        TokenEntity tokenEntity = (TokenEntity) redisTemplate.opsForValue().get(key);
+        TokenEntity tokenEntity = objectMapper.convertValue(
+                redisTemplate.opsForValue().get(key), TokenEntity.class);
+
         if(tokenEntity == null){
             throw new ShepTokenException(TOKEN_IS_INVALID_OR_EXPIRED);
         }

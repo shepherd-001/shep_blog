@@ -17,6 +17,7 @@ import com.shepherd.shep_blog.utils.pagination_utils.PageMapper;
 import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,6 +42,7 @@ public class AuthorServiceImpl implements AuthorService{
     private final TokenService tokenService;
     private final MailNotificationService notificationService;
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("organizationPhoneNumber", "createdAt");
+    private static final String AUTHOR_CACHE_NAME = "authorCache";
 
     @Override
     public AuthorResponse registerAuthor(RegisterAuthorRequest request) {
@@ -88,6 +90,11 @@ public class AuthorServiceImpl implements AuthorService{
     }
 
     @Override
+    @Cacheable(
+            value = AUTHOR_CACHE_NAME,
+            key = "#request.toCacheKey('authors')",
+            unless = "#result == null || #result.content.isEmpty() || request.resolvedPageNumber() > 5"
+    )
     public PaginationResponse<AuthorResponse> getAllAuthor(PaginationRequest request) {
         Pageable pageable = PageRequestFactory.create(request, ALLOWED_SORT_FIELDS);
         Page<Author> authors = authorRepository.findAll(pageable);
