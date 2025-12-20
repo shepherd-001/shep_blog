@@ -75,7 +75,7 @@ public class TokenServiceImpl implements TokenService{
         redisTemplate.opsForSet().add(setKey, key);
         redisTemplate.expire(setKey, ttl, TimeUnit.SECONDS);
 
-        log.info("==>>nCreated a new {} token for user {}", tokenType, email);
+        log.info("==>> Created a new {} token for user {}", tokenType, email);
         return token;
     }
 

@@ -23,7 +23,7 @@ public final class PageMapper {
                 .totalPages(page.getTotalPages())
                 .hasNext(page.hasNext())
                 .hasPrevious(page.hasPrevious())
-                .isLast(page.isLast())
+                .last(page.isLast())
                 .build();
     }
 
@@ -37,7 +37,7 @@ public final class PageMapper {
                 .totalPages(page.getTotalPages())
                 .hasNext(page.hasNext())
                 .hasPrevious(page.hasPrevious())
-                .isLast(page.isLast())
+                .last(page.isLast())
                 .build();
     }
 
