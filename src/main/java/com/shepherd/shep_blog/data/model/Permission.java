@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "permissions")
+@Table(name = "permissions",
+        uniqueConstraints = @UniqueConstraint(name = "uk_permissions_name", columnNames = "name"))
 @Getter
 @Setter
 @AllArgsConstructor

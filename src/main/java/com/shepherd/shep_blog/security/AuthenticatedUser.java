@@ -10,10 +10,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Builder
 @Getter
@@ -23,22 +22,31 @@ public class AuthenticatedUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(user == null || user.getRole() == null) {
-            log.info("The user or user role is empty");
+        if(user == null) {
+            log.warn("AuthenticatedUser has no user.");
             return Collections.emptyList();
         }
 
-        UserRole role = user.getRole();
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
-
-        if(role.getPermissions() != null) {
-            role.getPermissions().stream()
-                    .map(permission -> new SimpleGrantedAuthority(permission.getName()))
-                    .forEach(authorities::add);
+        Set<UserRole> roles = user.getRoles();
+        if(roles == null || roles.isEmpty()) {
+            log.warn("User {} has no roles", user.getEmail());
+            return Collections.emptyList();
         }
-        return authorities;
+
+        return roles.stream()
+                .filter(Objects::nonNull)
+                .flatMap(role -> {
+                    Stream<SimpleGrantedAuthority> roleAuthority =
+                            Stream.of(new  SimpleGrantedAuthority("ROLE_" + role.getName()));
+                    Stream<SimpleGrantedAuthority> permissionAuthorities =
+                            Optional.ofNullable(role.getPermissions())
+                                    .orElse(Collections.emptySet())
+                                    .stream()
+                                    .filter(Objects::nonNull)
+                                    .map(permission -> new SimpleGrantedAuthority(permission.getName()));
+                    return Stream.concat(roleAuthority, permissionAuthorities);
+                })
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override

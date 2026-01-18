@@ -38,7 +38,6 @@ public class LogoutService{
         else log.info("==>> Token already expired, no need for blacklist");
     }
 
-    @Async
     public void logoutAllSessions(){
         String userEmail = SecurityUtils.getAuthenticationName();
         jwtTokenService.revokeAllTokensForUser(userEmail);

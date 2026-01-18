@@ -11,20 +11,37 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
-    boolean existsByUserNameEqualsIgnoreCase(String userName);
-    boolean existsByEmailEqualsIgnoreCase(String email);
-    boolean existsByRoleName(String roleName);
+    boolean existsByUsernameIgnoreCase(String username);
+    boolean existsByEmailIgnoreCase(String email);
+    boolean existsByRoles_Name(String roleName);
+
+//@Query("""
+//    select 1
+//    from User u
+//    join u.roles r
+//    where r.name = :roleName
+//""")
+//Optional<Integer> existsAnyUserWithRole(@Param("roleName") String roleName);
+
+    Optional<User> findByEmailIgnoreCase(String email);
 
     @Query("""
-        select u from User  u
-        join fetch u.role r
+        select distinct u
+        from User  u
+        left join fetch u.roles r
         left join fetch r.permissions
         where lower(u.email) = lower(:email)
-       """)
+      """)
     Optional<User> findByEmailWithRoleAndPermissions(@Param("email") String email);
 
-    Optional<User> findByEmailEqualsIgnoreCase(String email);
-
-    @Query("select u from User  u where u.enabled = :enabled and u.role.name <> 'SUPER_ADMIN'")
-    Page<User> findAllByEnabled(boolean enabled, Pageable pageable);
+    @Query("""
+        select u from User u
+        where u.enabled = :enabled
+        and not exists(
+            select 1
+            from u.roles r
+            where r.name = :exludedRoleName
+        )
+   """)
+    Page<User> findAllEnabledExcludingRole(boolean enabled, String excludedRoleName, Pageable pageable);
 }

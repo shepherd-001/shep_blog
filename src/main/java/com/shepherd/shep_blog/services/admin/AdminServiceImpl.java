@@ -42,6 +42,7 @@ public class AdminServiceImpl implements AdminService{
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
     private final UserMapper userMapper;
+    private static final Set<String> ALLOWED_FIELDS = Set.of("createdAt", "createdBy");
 
     @Override
     public InvitationResponse declineInvitation(DeclineInviteRequest request) {
@@ -51,7 +52,7 @@ public class AdminServiceImpl implements AdminService{
         Invitation invitation = getInvitationByEmail(email);
 
         if(invitation.getStatus() != InvitationStatus.PENDING){
-            log.warn("Attempt to decline non-pending invitation for '{}'", email);
+            log.warn("==>> Attempt to decline non-pending invitation for '{}'", email);
             throw new IllegalStateException(INVITATION_ALREADY_PROCESSED);
         }
 
@@ -71,7 +72,7 @@ public class AdminServiceImpl implements AdminService{
         Invitation invitation = getInvitationByEmail(email);
 
         if(invitation.getStatus() != InvitationStatus.PENDING){
-            log.warn("Attempt to accept non-pending invitation for '{}'", email);
+            log.warn("==>> Attempt to accept non-pending invitation for '{}'", email);
             throw new IllegalStateException(INVITATION_ALREADY_PROCESSED);
         }
 
@@ -90,7 +91,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public PaginationResponse<AdminResponse> getAllActiveAdmins(PaginationRequest request) {
-        Pageable pageable = PageRequestFactory.create(request, Set.of("createdBy"));
+        Pageable pageable = PageRequestFactory.create(request, ALLOWED_FIELDS);
         Page<Admin> admins = adminRepository.findAllActiveAdmins(pageable);
         log.info("==>> Fetching all admins");
         return PageMapper.map(admins, this::buildAdminResponse);
@@ -98,20 +99,19 @@ public class AdminServiceImpl implements AdminService{
 
     private AdminResponse buildAdminResponse(Admin admin){
         return AdminResponse.builder()
-                .user(userMapper
-                        .mapToUserResponse(admin.getUser()))
+                .user(userMapper.mapToUserResponse(admin.getUser()))
                 .build();
     }
 
     private User createUser(AcceptInviteRequest request, User user) {
         UserRole userRole = roleService.getRole(RoleUtil.ADMIN);
-        if(!user.getRole().equals(userRole)){
-            throw new UnauthorizedException("You are not authorized to accept invitation");
-        }
+//        if(!user.getRole().equals(userRole)){
+//            throw new UnauthorizedException("You are not authorized to accept invitation");
+//        }
 
         user.setFirstName(request.getFirstName().trim());
         user.setLastName(request.getLastName().trim());
-        user.setUserName(request.getUserName().toLowerCase().trim());
+        user.setUsername(request.getUserName().toLowerCase().trim());
         user.setEmail(request.getEmail().toLowerCase().trim());
         user.setGender(request.getGender());
         user.setPassword(passwordEncoder.encode(request.getPassword()));

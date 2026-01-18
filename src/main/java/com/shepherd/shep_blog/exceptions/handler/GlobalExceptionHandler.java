@@ -36,7 +36,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             IllegalArgumentException.class,
             IllegalStateException.class,
-            EmailValidationException.class,
             UserAlreadyEnabledException.class,
             InvalidJwtException.class,
             ShepTokenException.class,

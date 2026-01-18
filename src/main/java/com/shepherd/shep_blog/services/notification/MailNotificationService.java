@@ -8,4 +8,5 @@ public interface MailNotificationService {
     void sendAuthorOnboardingMail(User user, String token, TokenType tokenType);
     void sendResetPasswordMail(User user, String token);
     void sendAdminInvitation(User user, String token,  TokenType tokenType);
+    void sendAuthorMemberInvitation(User user, String token, String inviterName, TokenType tokenType);
 }

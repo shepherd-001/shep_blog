@@ -1,5 +1,6 @@
 package com.shepherd.shep_blog.controllers;
 
+import com.shepherd.shep_blog.data.dto.request.AddTeamMemberRequest;
 import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterAuthorRequest;
 import com.shepherd.shep_blog.data.dto.response.ApiResponse;
@@ -28,5 +29,12 @@ public class AuthorController {
     public ResponseEntity<ApiResponse<?>> getAllAuthors(@RequestBody PaginationRequest paginationRequest){
         return ResponseEntity.ok(ApiResponse
                 .success(authorService.getAllAuthor(paginationRequest)));
+    }
+
+    @PostMapping("/team-member/add")
+    @PreAuthorize("hasRole('SUPER_AUTHOR')")
+    public ResponseEntity<ApiResponse<?>> addTeamMember(@Valid @RequestBody AddTeamMemberRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse
+                .success("Team member added successfully", authorService.addTeamMember(request)));
     }
 }

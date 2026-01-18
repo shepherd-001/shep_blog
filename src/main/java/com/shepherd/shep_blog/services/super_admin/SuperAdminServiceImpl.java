@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static com.shepherd.shep_blog.utils.ErrorMessage.INVITATION_NOT_FOUND;
 import static com.shepherd.shep_blog.utils.ErrorMessage.USER_EMAIL_ALREADY_EXISTS;
@@ -44,7 +45,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
     private final MailNotificationService mailNotificationService;
 
     public void createSuperAdminIfNotExists() {
-        if(userRepository.existsByRoleName(SUPER_ADMIN)){
+        if(userRepository.existsByRoles_Name(SUPER_ADMIN)){
             log.info("==>> Super admin already exists");
             return;
         }
@@ -55,7 +56,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                 .gender(Gender.MALE)
                 .email(superAdminEmail)
                 .password(passwordEncoder.encode(superAdminPassword))
-                .role(role)
+                .roles(Set.of(role))
                 .enabled(true)
                 .emailVerified(true)
                 .build();
@@ -70,14 +71,14 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         List<InvitationResponse> invitationResponses = new ArrayList<>();
         for(String email : inviteAdminRequest.getAdminEmails()){
             email = email.trim();
-            if(userRepository.existsByEmailEqualsIgnoreCase(email)){
+            if(userRepository.existsByEmailIgnoreCase(email)){
                 throw new AlreadyExistsException(USER_EMAIL_ALREADY_EXISTS);
             }
 
             UserRole role = roleService.getRole(ADMIN);
             User user = User.builder()
                     .email(email.toLowerCase())
-                    .role(role)
+                    .roles(Set.of(role))
                     .build();
 
             Invitation invitation = Invitation.builder()

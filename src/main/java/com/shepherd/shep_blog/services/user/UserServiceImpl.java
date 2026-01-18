@@ -16,6 +16,7 @@ import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.services.notification.MailNotificationService;
 import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
+import com.shepherd.shep_blog.utils.RoleUtil;
 import com.shepherd.shep_blog.utils.pagination_utils.PageMapper;
 import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import lombok.RequiredArgsConstructor;
@@ -71,14 +72,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void checkIfUserEmailExists(String email) {
-        if(userRepository.existsByEmailEqualsIgnoreCase(email.trim())) {
+        if(userRepository.existsByEmailIgnoreCase(email.trim())) {
             throw new AlreadyExistsException(USER_EMAIL_ALREADY_EXISTS);
         }
     }
 
     @Override
     public void checkIfUserNameExists(String username) {
-        if(userRepository.existsByUserNameEqualsIgnoreCase(username.trim())) {
+        if(userRepository.existsByUsernameIgnoreCase(username.trim())) {
             throw new AlreadyExistsException(USER_NAME_ALREADY_EXISTS);
         }
     }
@@ -86,8 +87,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public PaginationResponse<UserResponse> getAllEnabledUser(boolean enabled, PaginationRequest request) {
         Pageable pageable = PageRequestFactory.create(request, ALLOWED_SORT_FIELDS);
-        Page<User> users = userRepository.findAllByEnabled(enabled, pageable);
+        Page<User> users = userRepository.findAllEnabledExcludingRole(enabled, RoleUtil.SUPER_ADMIN, pageable);
         log.info("==>> Fetching all user: enabled -> '{}'", enabled);
         return PageMapper.map(users, userMapper::mapToUserResponse);
+    }
+
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
 }

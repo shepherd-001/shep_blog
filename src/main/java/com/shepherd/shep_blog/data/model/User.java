@@ -4,6 +4,7 @@ import com.shepherd.shep_blog.data.model.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -13,8 +14,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(indexes = {
-        @Index(name = "idx_userName", columnList = "userName"),
-        @Index(name = "idx_email", columnList = "email"),
+        @Index(name = "idx_user_userName", columnList = "username"),
+        @Index(name = "idx_user_email", columnList = "email"),
         @Index(name = "idx_createdAt", columnList = "createdAt")
 })
 public class User extends BaseEntity {
@@ -24,17 +25,24 @@ public class User extends BaseEntity {
     private String firstName;
     private String lastName;
     @Column(unique = true)
-    private String userName;
+    private String username;
     @Column(unique = true)
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "role_id", nullable = false)
-    private UserRole role;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            indexes = {
+                    @Index(name = "idx_user_roles_user", columnList = "user_id"),
+                    @Index(name = "idx_user_roles_role", columnList = "role_id")
+            }
+    )
+    private Set<UserRole> roles;
 
-    private boolean enabled;
-    private boolean emailVerified;
+    private boolean enabled = true;
+    private boolean emailVerified = true;
 }

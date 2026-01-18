@@ -16,6 +16,7 @@ public class UserResponse {
     private String userName;
     private String email;
     private Gender gender;
+    private String userRole;
     private boolean enabled;
     private boolean emailVerified;
 }

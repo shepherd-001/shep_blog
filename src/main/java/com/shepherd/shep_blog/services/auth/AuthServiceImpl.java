@@ -112,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String requestPasswordReset(String email) {
-        userRepository.findByEmailEqualsIgnoreCase(email.trim())
+        userRepository.findByEmailIgnoreCase(email.trim())
                 .filter(user -> user.isEnabled() && user.isEmailVerified())
                 .ifPresent(this::sendPasswordResetToken);
         return "If the email exists, a reset password link has been sent to your email address";
@@ -144,7 +144,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private User getUserByEmail(String email) {
-        return userRepository.findByEmailEqualsIgnoreCase(email.trim()).orElseThrow(
+        return userRepository.findByEmailIgnoreCase(email.trim()).orElseThrow(
                 ()-> new ResourceNotFoundException(USER_EMAIL_NOT_FOUND));
     }
 

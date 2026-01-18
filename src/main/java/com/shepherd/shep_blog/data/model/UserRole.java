@@ -7,7 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "user_roles")
+@Table(name = "roles",
+        uniqueConstraints = @UniqueConstraint(name = "uk_roles_name", columnNames = "name"))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,7 +19,7 @@ public class UserRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, length = 50)
     private String name;
 
     @ManyToMany(fetch = FetchType.LAZY)

@@ -39,6 +39,7 @@ public class TokenServiceImpl implements TokenService{
             case EMAIL_CONFIRMATION -> emailConfirmationExpiration;
             case ADMIN_INVITATION -> adminInviteExpiration;
             case AUTHOR_SIGN_UP ->  authorOnboardingExpiration;
+            default -> 300;
         };
     }
 
@@ -56,6 +57,7 @@ public class TokenServiceImpl implements TokenService{
 
         // revoke old user tokens
         revokeAllUserTokens(email, tokenType);
+
 
         String token = AppUtils.generateToken();
         String hashedToken = HashUtils.sha256(token);

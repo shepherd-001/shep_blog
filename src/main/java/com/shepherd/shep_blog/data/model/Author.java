@@ -20,14 +20,14 @@ public class Author extends BaseEntity {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Member> members =  new ArrayList<>();
+    private List<TeamMember> teamMembers =  new ArrayList<>();
 
     private String organizationPhoneNumber;
     private String websiteAddress;
     private String approvedBy;
 
-    public void addMember(Member member) {
-        members.add(member);
-        member.setAuthor(this);
+    public void addMember(TeamMember teamMember) {
+        teamMembers.add(teamMember);
+        teamMember.setAuthor(this);
     }
 }

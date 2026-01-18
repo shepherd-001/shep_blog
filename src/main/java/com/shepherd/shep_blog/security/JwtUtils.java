@@ -1,6 +1,7 @@
 package com.shepherd.shep_blog.security;
 
 import com.shepherd.shep_blog.data.model.User;
+import com.shepherd.shep_blog.data.model.UserRole;
 import com.shepherd.shep_blog.exceptions.InvalidJwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -62,7 +63,7 @@ public class JwtUtils {
 
     public String generateAccessToken(User user){
         Map<String, Object> claims = Map.of(TOKEN_TYPE, "access",
-                ROLE, user.getRole().getName());
+                ROLE, user.getRoles().stream().map(UserRole::getName));
         return buildJwtToken(claims, user.getEmail(), accessTokenExpiration);
     }
 

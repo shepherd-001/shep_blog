@@ -41,7 +41,7 @@ public class MailNotificationServiceImpl implements MailNotificationService {
                 .subject("Confirm Your Email Address")
                 .recipientEmail(user.getEmail())
                 .variables(Map.of(
-                        "displayName", user.getUserName(),
+                        "displayName", user.getUsername(),
                         "confirmationLink", verificationLink))
                 .build();
         mailAsyncExecutor.sendEmailAsync(emailRequest);
@@ -59,7 +59,7 @@ public class MailNotificationServiceImpl implements MailNotificationService {
                 .subject("Verify Your Author Account")
                 .recipientEmail(user.getEmail())
                 .variables(Map.of(
-                        "displayName", user.getUserName(),
+                        "displayName", user.getUsername(),
                         "confirmationLink", verificationLink))
                 .build();
         mailAsyncExecutor.sendEmailAsync(emailRequest);
@@ -95,6 +95,24 @@ public class MailNotificationServiceImpl implements MailNotificationService {
                 .build();
         mailAsyncExecutor.sendEmailAsync(emailRequest);
     }
+
+    @Override
+    public void sendAuthorMemberInvitation(User user, String token, String inviterName, TokenType tokenType) {
+        String link = buildLink("/member/invitation", Map.of(
+                "token", token,
+                "type", tokenType.name()));
+
+        EmailRequest emailRequest = EmailRequest.builder()
+                .template(EmailTemplate.AUTHOR_MEMBER_INVITATION)
+                .subject("Invitation to Shep Blog")
+                .recipientEmail(user.getEmail())
+                .variables(Map.of(
+                        "inviterName", inviterName,
+                        "displayName", user.getFirstName(),
+                        "invitationLink", link))
+                .build();
+        mailAsyncExecutor.sendEmailAsync(emailRequest);
+    }
 }
 
 @Getter
@@ -102,7 +120,8 @@ enum EmailTemplate {
     EMAIL_CONFIRMATION("email-confirmation"),
     AUTHOR_ONBOARDING("author-onboarding"),
     RESET_PASSWORD("reset-password"),
-    ADMIN_INVITATION("admin-invitation");
+    ADMIN_INVITATION("admin-invitation"),
+    AUTHOR_MEMBER_INVITATION("author-member-invitation");
 
     private final String templateName;
 

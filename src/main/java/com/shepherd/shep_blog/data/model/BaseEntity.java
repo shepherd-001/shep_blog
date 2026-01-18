@@ -26,12 +26,12 @@ public abstract class BaseEntity {
     @Column(updatable = false, nullable = false)
     private Instant createdAt;
 
-    @LastModifiedDate
-    private Instant lastModifiedAt;
-
     @CreatedBy
     @Column(updatable = false)
     private String createdBy;
+
+    @LastModifiedDate
+    private Instant lastModifiedAt;
 
     @LastModifiedBy
     private String lastModifiedBy;

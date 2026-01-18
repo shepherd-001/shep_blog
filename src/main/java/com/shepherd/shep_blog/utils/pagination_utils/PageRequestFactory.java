@@ -18,7 +18,7 @@ public final class PageRequestFactory {
 
     public static Pageable create(PaginationRequest request, Set<String> allowedSortFields) {
         if (request == null) {
-            throw new IllegalArgumentException("PaginationRequest must not be null");
+            throw new IllegalArgumentException("Pagination request must not be null");
         }
 
         String sortField = request.resolvedSortField(allowedSortFields);
