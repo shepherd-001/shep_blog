@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmailWithRoleAndPermissions(email.trim())
                 .orElseThrow(()-> {
                     log.info("Login attempt failed: User with the provided email not found");
-                    return new UsernameNotFoundException("User with the provided email not found");
+                    return new UsernameNotFoundException("User not found");
                 });
         return AuthenticatedUser.builder()
                 .user(user)

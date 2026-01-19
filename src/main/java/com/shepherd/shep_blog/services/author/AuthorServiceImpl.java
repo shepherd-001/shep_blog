@@ -5,7 +5,9 @@ import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterAuthorRequest;
 import com.shepherd.shep_blog.data.dto.response.AuthorResponse;
 import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
-import com.shepherd.shep_blog.data.model.*;
+import com.shepherd.shep_blog.data.model.Author;
+import com.shepherd.shep_blog.data.model.TeamMember;
+import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.repository.AuthorRepository;
 import com.shepherd.shep_blog.data.repository.TeamMemberRepository;
@@ -36,7 +38,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.shepherd.shep_blog.utils.ErrorMessage.INVALID_WEBSITE_ADDRESS;
-import static com.shepherd.shep_blog.utils.RoleUtil.AUTHOR;
 import static com.shepherd.shep_blog.utils.RoleUtil.SUPER_AUTHOR;
 
 
@@ -61,12 +62,11 @@ public class AuthorServiceImpl implements AuthorService{
     @Override
     public AuthorResponse registerAuthor(RegisterAuthorRequest request) {
         userService.checkIfUserEmailExists(request.getEmail());
-        userService.checkIfUserNameExists(request.getUserName());
+        userService.checkIfUserNameExists(request.getUsername());
         checkIfWebsiteAddressIsValid(request.getWebsiteAddress());
 
         User user = userMapper.mapToUser(request);
-        UserRole role = roleService.getRole(SUPER_AUTHOR);
-        user.setRole(role);
+        user.setRoles(Set.of(roleService.getRole(SUPER_AUTHOR)));
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user = userService.saveUser(user);
 
@@ -129,7 +129,7 @@ public class AuthorServiceImpl implements AuthorService{
         checkIfTeamMemberEmailExists(author.getId(), request.getEmail());
 
         User user = userMapper.mapToUser(request);
-        user.setRole(roleService.getRole(AUTHOR));
+//        user.setRole(roleService.getRole(AUTHOR));
         user = userService.saveUser(user);
 
         TeamMember teamMember = TeamMember.builder()
@@ -169,3 +169,47 @@ public class AuthorServiceImpl implements AuthorService{
                 : String.format("%s %s", sender.getFirstName(), sender.getLastName());
     }
 }
+
+
+//@Transactional
+//@CacheEvict(value = AUTHOR_CACHE_NAME, allEntries = true)
+//@Override
+//public AuthorResponse addTeamMember(AddTeamMemberRequest request) {
+//    Author author = getAuthorById(request.getAuthorId());
+//
+//    User sender = SecurityUtils.getCurrentPrincipal().getUser();
+//    authorizeInvite(author.getId(), sender.getId());
+//
+//    // 1. Find existing user (global)
+//    User user = userService.findByEmailIgnoreCase(request.getEmail())
+//            .orElseGet(() -> createNewUser(request));
+//
+//    // 2. Check team membership
+//    if (teamMemberRepository.existsByAuthorIdAndUserId(author.getId(), user.getId())) {
+//        throw new AlreadyExistsException("The user is already a member of this author team");
+//    }
+//
+//    // 3. Add team member
+//    TeamMember teamMember = TeamMember.builder()
+//            .user(user)
+//            .author(author)
+//            .build();
+//
+//    author.getTeamMembers().add(teamMember);
+//    authorRepository.save(author);
+//
+//    // 4. Notify
+//    sendInvitation(sender, user);
+//
+//    return buildAuthorResponse(author);
+//}
+
+
+
+//private User createNewUser(AddTeamMemberRequest request) {
+//    User user = userMapper.mapToUser(request);
+//    user.setRole(roleService.getRole(AUTHOR));
+//    user.setEnabled(false);
+//    user.setEmailVerified(false);
+//    return userService.saveUser(user);
+//}

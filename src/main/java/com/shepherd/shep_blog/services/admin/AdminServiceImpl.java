@@ -6,7 +6,10 @@ import com.shepherd.shep_blog.data.dto.request.DeclineInviteRequest;
 import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.response.InvitationResponse;
 import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
-import com.shepherd.shep_blog.data.model.*;
+import com.shepherd.shep_blog.data.model.Admin;
+import com.shepherd.shep_blog.data.model.Invitation;
+import com.shepherd.shep_blog.data.model.TokenEntity;
+import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.model.enums.InvitationStatus;
 import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.repository.AdminRepository;
@@ -15,7 +18,7 @@ import com.shepherd.shep_blog.exceptions.ResourceNotFoundException;
 import com.shepherd.shep_blog.exceptions.UnauthorizedException;
 import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.services.token.TokenService;
-import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
+import com.shepherd.shep_blog.services.user.UserService;
 import com.shepherd.shep_blog.utils.RoleUtil;
 import com.shepherd.shep_blog.utils.pagination_utils.PageMapper;
 import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
@@ -40,9 +43,9 @@ public class AdminServiceImpl implements AdminService{
     private final TokenService tokenService;
     private final InvitationRepository  invitationRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RoleService roleService;
     private final UserMapper userMapper;
     private static final Set<String> ALLOWED_FIELDS = Set.of("createdAt", "createdBy");
+    private final UserService userService;
 
     @Override
     public InvitationResponse declineInvitation(DeclineInviteRequest request) {
@@ -104,10 +107,9 @@ public class AdminServiceImpl implements AdminService{
     }
 
     private User createUser(AcceptInviteRequest request, User user) {
-        UserRole userRole = roleService.getRole(RoleUtil.ADMIN);
-//        if(!user.getRole().equals(userRole)){
-//            throw new UnauthorizedException("You are not authorized to accept invitation");
-//        }
+        if(!userService.existsUserRole(user.getId(), RoleUtil.ADMIN)){
+            throw new UnauthorizedException("You are not authorized to accept invitation");
+        }
 
         user.setFirstName(request.getFirstName().trim());
         user.setLastName(request.getLastName().trim());

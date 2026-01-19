@@ -6,7 +6,7 @@ public final class ErrorMessage {
     public static final String SAME_OLD_AND_NEW_PASSWORD =  "You cannot reuse a recent password. Please choose a new one.";
     public static final String MISMATCH_PASSWORD = "Passwords do not match";
 
-    public static final String USER_EMAIL_NOT_FOUND = "User not found";
+    public static final String USER_NOT_FOUND = "User not found";
     public static final String USER_EMAIL_ALREADY_EXISTS = "User with the provided email already exists";
     public static final String USER_NAME_ALREADY_EXISTS = "The user name provided is taken";
 

@@ -1,7 +1,7 @@
 package com.shepherd.shep_blog.services.notification;
 
-import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.model.User;
+import com.shepherd.shep_blog.data.model.enums.TokenType;
 
 public interface MailNotificationService {
     void sendVerificationMail(User user, String token, TokenType tokenType);

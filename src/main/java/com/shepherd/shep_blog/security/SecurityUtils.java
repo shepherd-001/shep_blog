@@ -7,6 +7,8 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import static com.shepherd.shep_blog.utils.ErrorMessage.NON_INSTANTIABLE_UTILITY_CLASS;
+
 public final class SecurityUtils {
     private static final String BEARER_PREFIX = "Bearer ";
     private static final int BEARER_PREFIX_LENGTH = BEARER_PREFIX.length();
@@ -35,5 +37,9 @@ public final class SecurityUtils {
 
     public static String getAuthenticationName(){
         return getCurrentPrincipal().getUsername();
+    }
+
+    private SecurityUtils() {
+        throw new UnsupportedOperationException(NON_INSTANTIABLE_UTILITY_CLASS);
     }
 }

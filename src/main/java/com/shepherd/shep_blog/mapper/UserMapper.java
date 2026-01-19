@@ -17,14 +17,14 @@ public interface UserMapper {
 
     VerifyEmailResponse mapToVerifyEmailResponse(User user, AuthResponse authResponse);
 
-    @Mapping(target = "userName", source = "userName", qualifiedByName = "toLowerCaseTrim")
+    @Mapping(target = "username", source = "username", qualifiedByName = "toLowerCaseTrim")
     @Mapping(target = "email", source = "email", qualifiedByName = "toLowerCaseTrim")
     @Mapping(target = "password", ignore = true)
     User mapToUser(RegisterReaderRequest request);
 
     @Mapping(target = "firstName", source = "firstName", qualifiedByName = "trim")
     @Mapping(target = "lastName", source = "lastName", qualifiedByName = "trim")
-    @Mapping(target = "userName", source = "userName", qualifiedByName = "toLowerCaseTrim")
+    @Mapping(target = "username", source = "username", qualifiedByName = "toLowerCaseTrim")
     @Mapping(target = "email", source = "email", qualifiedByName = "toLowerCaseTrim")
     @Mapping(target = "password", ignore = true)
     User mapToUser(RegisterAuthorRequest request);
@@ -32,11 +32,10 @@ public interface UserMapper {
     @Mapping(target = "firstName", source = "firstName", qualifiedByName = "trim")
     @Mapping(target = "lastName", source = "lastName", qualifiedByName = "trim")
     @Mapping(target = "email", source = "email", qualifiedByName = "toLowerCaseTrim")
-    @Mapping(target = "userName", ignore = true)
+    @Mapping(target = "username", ignore = true)
     @Mapping(target = "password", ignore = true)
     User mapToUser(AddTeamMemberRequest request);
 
-    @Mapping(target = "userRole", source = "role.name")
     UserResponse mapToUserResponse(User user);
 
     RegisterUserResponse mapToRegisterReaderResponse(User user);

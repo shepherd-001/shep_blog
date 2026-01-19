@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -33,7 +34,8 @@ public class JwtUtils {
     @Value("${jwt.issuer}")
     private String issuer;
     private static final String TOKEN_TYPE = "token_type";
-    private static final String ROLE = "role";
+    private static final String ACCESS = "access";
+    private static final String REFRESH = "refresh";
 
 
     @PostConstruct
@@ -62,23 +64,23 @@ public class JwtUtils {
     }
 
     public String generateAccessToken(User user){
-        Map<String, Object> claims = Map.of(TOKEN_TYPE, "access",
-                ROLE, user.getRoles().stream().map(UserRole::getName));
-        return buildJwtToken(claims, user.getEmail(), accessTokenExpiration);
+        return buildJwtToken(user, ACCESS, accessTokenExpiration);
     }
 
     public String generateRefreshToken(User user){
-        Map<String, Object> claims = Map.of(TOKEN_TYPE, "refresh",
-                ROLE, user.getRole().getName());
-        return buildJwtToken(claims, user.getEmail(), refreshTokenExpiration);
+        return buildJwtToken(user, REFRESH, refreshTokenExpiration);
     }
 
-    private String buildJwtToken(Map<String, Object> claims, String email, long tokenExpiration){
+    private String buildJwtToken(User user, String tokenType, long tokenExpiration){
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(TOKEN_TYPE, tokenType);
+        claims.put("authorities", user.getRoles().stream().map(UserRole::getName).toList());
+
         Instant now = Instant.now();
         return Jwts.builder()
                 .issuer(issuer)
                 .id(UUID.randomUUID().toString()) // jwtId
-                .subject(email)
+                .subject(user.getEmail())
                 .claims(claims)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(tokenExpiration)))
@@ -110,7 +112,7 @@ public class JwtUtils {
         Claims claims = extractAllClaims(refreshToken);
 
         String tokenType = claims.get(TOKEN_TYPE, String.class);
-        if(!"refresh".equals(tokenType)){
+        if(!REFRESH.equals(tokenType)){
             throw new InvalidJwtException("Invalid refresh token");
         }
     }

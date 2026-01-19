@@ -8,10 +8,8 @@ import com.shepherd.shep_blog.data.dto.response.AuthResponse;
 import com.shepherd.shep_blog.data.dto.response.UserResponse;
 import com.shepherd.shep_blog.data.dto.response.VerifyEmailResponse;
 import com.shepherd.shep_blog.data.model.TokenEntity;
-import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.model.User;
-import com.shepherd.shep_blog.data.repository.UserRepository;
-import com.shepherd.shep_blog.exceptions.ResourceNotFoundException;
+import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.exceptions.UserAlreadyEnabledException;
 import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.security.AuthenticatedUser;
@@ -20,6 +18,7 @@ import com.shepherd.shep_blog.security.SecurityUtils;
 import com.shepherd.shep_blog.services.JwtTokenService;
 import com.shepherd.shep_blog.services.notification.MailNotificationService;
 import com.shepherd.shep_blog.services.token.TokenService;
+import com.shepherd.shep_blog.services.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +26,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final JwtTokenService jwtTokenService;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final TokenService tokenService;
     private final MailNotificationService  notificationService;
     private final UserMapper userMapper;
@@ -49,7 +49,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public VerifyEmailResponse verifyEmail(VerifyEmailRequest request) {
-        TokenEntity tokenEntity = tokenService.validateToken(request.getToken(), request.getTokenType(), request.getEmail());
+        TokenEntity tokenEntity = tokenService.validateToken(request.getToken(),
+                request.getTokenType(), request.getEmail());
         User user = getUserByEmail(tokenEntity.getEmail());
 
         if(user.isEmailVerified())
@@ -60,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEnabled(true);
         user.setEmailVerified(true);
 
-        user = userRepository.save(user);
+        user = userService.saveUser(user);
         return userMapper.mapToVerifyEmailResponse(user, generateJwtToken(user));
     }
 
@@ -94,7 +95,7 @@ public class AuthServiceImpl implements AuthService {
 
         validatePasswordChange(user.getPassword(), changePasswordRequest);
         user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
-        userRepository.save(user);
+        userService.saveUser(user);
         log.info("==>> Password changed successfully");
         return generateJwtToken(user);
     }
@@ -112,7 +113,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String requestPasswordReset(String email) {
-        userRepository.findByEmailIgnoreCase(email.trim())
+        userService.getByEmailIgnoreCase(email)
                 .filter(user -> user.isEnabled() && user.isEmailVerified())
                 .ifPresent(this::sendPasswordResetToken);
         return "If the email exists, a reset password link has been sent to your email address";
@@ -131,7 +132,7 @@ public class AuthServiceImpl implements AuthService {
         User user = getUserByEmail(tokenEntity.getEmail());
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        userRepository.save(user);
+        userService.saveUser(user);
         log.info("==>> Password reset successful for user {}", user.getEmail());
         return generateJwtToken(user);
     }
@@ -144,8 +145,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private User getUserByEmail(String email) {
-        return userRepository.findByEmailIgnoreCase(email.trim()).orElseThrow(
-                ()-> new ResourceNotFoundException(USER_EMAIL_NOT_FOUND));
+        return userService.getByEmailIgnoreCase(email.trim()).orElseThrow(()-> {
+            log.warn("User {} not found", email);
+            return new UsernameNotFoundException(USER_NOT_FOUND);
+        });
     }
 
     @Override

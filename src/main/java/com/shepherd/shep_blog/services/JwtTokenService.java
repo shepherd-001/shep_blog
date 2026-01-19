@@ -2,6 +2,7 @@ package com.shepherd.shep_blog.services;
 
 import com.shepherd.shep_blog.utils.HashUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JwtTokenService {
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -92,5 +94,10 @@ public class JwtTokenService {
         }
         redisTemplate.delete(USER_ACCESS_TOKENS_PREFIX + userEmail);
         redisTemplate.delete(USER_REFRESH_TOKENS_PREFIX + userEmail);
+
+        assert accessTokens != null;
+        assert refreshTokens != null;
+        log.info("==>> Revoked {} access tokens and {} refresh tokens for user {}",
+                accessTokens.size(), refreshTokens.size(), userEmail);
     }
 }

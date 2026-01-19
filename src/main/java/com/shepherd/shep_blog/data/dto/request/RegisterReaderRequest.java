@@ -18,7 +18,7 @@ import lombok.Setter;
 public class RegisterReaderRequest {
     @NotBlank(message = ValidationMessage.BLANK_USER_NAME)
     @Pattern(message = ValidationMessage.INVALID_USER_NAME, regexp = RegexPattern.USER_NAME)
-    private String userName;
+    private String username;
 
     @NotBlank(message = ValidationMessage.BLANK_EMAIL)
     @Pattern(message = ValidationMessage.INVALID_EMAIL, regexp = RegexPattern.EMAIL)

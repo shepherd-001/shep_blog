@@ -16,12 +16,18 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByRoles_Name(String roleName);
 
 //@Query("""
-//    select 1
-//    from User u
-//    join u.roles r
-//    where r.name = :roleName
+//    SELECT CASE WHEN EXISTS (
+//        SELECT 1
+//        FROM User u
+//        JOIN u.roles r
+//        WHERE u.id = :userId
+//          AND r.name = :roleName
+//    )
+//    THEN true ELSE false END
 //""")
-//Optional<Integer> existsAnyUserWithRole(@Param("roleName") String roleName);
+//boolean existsUserRole(@Param("userId") UUID userId,
+//                       @Param("roleName") String roleName);
+    boolean existsByIdAndRoles_Name(UUID userId, String roleName);
 
     Optional<User> findByEmailIgnoreCase(String email);
 

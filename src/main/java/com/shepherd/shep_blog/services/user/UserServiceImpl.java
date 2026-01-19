@@ -6,9 +6,8 @@ import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
 import com.shepherd.shep_blog.data.dto.response.RegisterUserResponse;
 import com.shepherd.shep_blog.data.dto.response.UserResponse;
 import com.shepherd.shep_blog.data.model.Reader;
-import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.model.User;
-import com.shepherd.shep_blog.data.model.UserRole;
+import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.repository.ReaderRepository;
 import com.shepherd.shep_blog.data.repository.UserRepository;
 import com.shepherd.shep_blog.exceptions.AlreadyExistsException;
@@ -23,14 +22,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
-import static com.shepherd.shep_blog.utils.ErrorMessage.USER_EMAIL_ALREADY_EXISTS;
-import static com.shepherd.shep_blog.utils.ErrorMessage.USER_NAME_ALREADY_EXISTS;
+import static com.shepherd.shep_blog.utils.ErrorMessage.*;
 import static com.shepherd.shep_blog.utils.RoleUtil.READER;
 
 @Service
@@ -52,11 +53,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public RegisterUserResponse registerReader(RegisterReaderRequest request) {
         checkIfUserEmailExists(request.getEmail());
-        checkIfUserNameExists(request.getUserName());
+        checkIfUserNameExists(request.getUsername());
 
         User user = userMapper.mapToUser(request);
-        UserRole role = roleService.getRole(READER);
-        user.setRole(role);
+        user.setRoles(Set.of(roleService.getRole(READER)));
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         Reader reader = Reader.builder()
@@ -95,5 +95,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public boolean existsUserRole(UUID userId, String roleName) {
+        return userRepository.existsByIdAndRoles_Name(userId, roleName);
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        return userRepository.findByEmailIgnoreCase(email.trim()).orElseThrow(()-> {
+            log.warn("User {} not found", email);
+            return new UsernameNotFoundException(USER_NOT_FOUND);
+        });
+    }
+
+    @Override
+    public Optional<User> getByEmailIgnoreCase(String email) {
+        return userRepository.findByEmailIgnoreCase(email.trim());
     }
 }
