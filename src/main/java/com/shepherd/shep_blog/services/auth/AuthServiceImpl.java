@@ -26,7 +26,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
     public VerifyEmailResponse verifyEmail(VerifyEmailRequest request) {
         TokenEntity tokenEntity = tokenService.validateToken(request.getToken(),
                 request.getTokenType(), request.getEmail());
-        User user = getUserByEmail(tokenEntity.getEmail());
+        User user = userService.getByEmail(tokenEntity.getEmail());
 
         if(user.isEmailVerified())
             throw new UserAlreadyEnabledException("User is already verified");
@@ -129,7 +128,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse resetPassword(ResetPasswordRequest request) {
         TokenEntity tokenEntity = tokenService.validateToken(request.getToken(),
                 TokenType.RESET_PASSWORD, request.getEmail());
-        User user = getUserByEmail(tokenEntity.getEmail());
+        User user = userService.getByEmail(tokenEntity.getEmail());
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userService.saveUser(user);
@@ -144,13 +143,6 @@ public class AuthServiceImpl implements AuthService {
         return userMapper.mapToUserResponse(user);
     }
 
-    private User getUserByEmail(String email) {
-        return userService.getByEmailIgnoreCase(email.trim()).orElseThrow(()-> {
-            log.warn("User {} not found", email);
-            return new UsernameNotFoundException(USER_NOT_FOUND);
-        });
-    }
-
     @Override
     @Transactional
     public AuthResponse refreshToken(String refreshToken) {
@@ -163,7 +155,7 @@ public class AuthServiceImpl implements AuthService {
         String email = jwtUtils.extractUsername(refreshToken);
         jwtTokenService.revokeRefreshToken(refreshToken);
 
-        User user = getUserByEmail(email);
+        User user = userService.getByEmail(email);
 
         log.info("==>> Auth token refreshed for '{}'", email);
         return generateJwtToken(user);

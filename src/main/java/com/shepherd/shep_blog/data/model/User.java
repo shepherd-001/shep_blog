@@ -43,6 +43,6 @@ public class User extends BaseEntity {
     )
     private Set<UserRole> roles;
 
-    private boolean enabled = true;
-    private boolean emailVerified = true;
+    private boolean enabled = false;
+    private boolean emailVerified = false;
 }

@@ -1,5 +1,6 @@
 package com.shepherd.shep_blog.data.model;
 
+import com.shepherd.shep_blog.data.model.enums.TeamMemberRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +20,11 @@ public class TeamMember {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    private TeamMemberRole role;
+
+    private boolean isRevoked = false;
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
