@@ -8,7 +8,7 @@ import lombok.Getter;
 public class VerifyEmailResponse {
     private String firstName;
     private String lastName;
-    private String userName;
+    private String username;
     private String email;
     private boolean enabled;
     private boolean emailVerified;

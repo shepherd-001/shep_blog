@@ -15,6 +15,7 @@ import com.shepherd.shep_blog.data.repository.TeamMemberRepository;
 import com.shepherd.shep_blog.exceptions.AlreadyExistsException;
 import com.shepherd.shep_blog.exceptions.ResourceNotFoundException;
 import com.shepherd.shep_blog.exceptions.UnauthorizedException;
+import com.shepherd.shep_blog.mapper.AuthorMapper;
 import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.security.SecurityUtils;
 import com.shepherd.shep_blog.services.notification.MailNotificationService;
@@ -34,6 +35,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -52,6 +54,7 @@ public class AuthorServiceImpl implements AuthorService{
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final AuthorMapper authorMapper;
     private final TokenService tokenService;
     private final TeamMemberRepository  teamMemberRepository;
     private final MailNotificationService notificationService;
@@ -68,7 +71,8 @@ public class AuthorServiceImpl implements AuthorService{
         checkIfWebsiteAddressIsValid(request.getWebsiteAddress());
 
         User user = userMapper.mapToUser(request);
-        user.setRoles(Set.of(roleService.getRole(SUPER_AUTHOR)));
+//        user.setRoles(Set.of(roleService.getRole(SUPER_AUTHOR)));
+        user.assignRole(roleService.getRole(SUPER_AUTHOR));
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user = userService.saveUser(user);
 
@@ -100,7 +104,7 @@ public class AuthorServiceImpl implements AuthorService{
         return AuthorResponse.builder()
                 .authorId(author.getId())
                 .members(teamMembers.stream()
-                        .map(teamMember -> userMapper.mapToUserResponse(teamMember.getUser()))
+                        .map(authorMapper::mapToTeamMemberResponse)
                         .toList())
                 .organizationPhoneNumber(author.getOrganizationPhoneNumber())
                 .websiteAddress(author.getWebsiteAddress())
@@ -121,7 +125,7 @@ public class AuthorServiceImpl implements AuthorService{
     }
 
     @Transactional
-    @CacheEvict(value = AUTHOR_CACHE_NAME, allEntries = true)
+    @CacheEvict(value = AUTHOR_CACHE_NAME, key = "'author:' + #request.authorId")
     @Override
     public AuthorResponse addTeamMember(AddTeamMemberRequest request) {
         Author author = getAuthorById(request.getAuthorId());
@@ -129,15 +133,17 @@ public class AuthorServiceImpl implements AuthorService{
         User sender = SecurityUtils.getCurrentPrincipal().getUser();
         authorizeInvite(author.getId(), sender.getId());
         checkIfTeamMemberEmailExists(author.getId(), request.getEmail());
+        validateTeamMemberRole(author.getId(), request.getRole());
 
         User user = userService.getByEmailIgnoreCase(request.getEmail())
         .orElseGet(() -> userMapper.mapToUser(request));
 
-        user.getRoles().add(roleService.getRole(AUTHOR));
+        user.assignRole(roleService.getRole(AUTHOR));
         user = userService.saveUser(user);
 
         TeamMember teamMember = TeamMember.builder()
                 .user(user)
+                .role(request.getRole())
                 .build();
 
         author.addMember(teamMember);
@@ -156,6 +162,15 @@ public class AuthorServiceImpl implements AuthorService{
     private void authorizeInvite(UUID authorId, UUID userId) {
         if(!teamMemberRepository.existsByAuthorIdAndUserId(authorId, userId))
             throw new UnauthorizedException("User is not allowed to invite members to this author");
+    }
+
+    private void validateTeamMemberRole(UUID authorId, TeamMemberRole role) {
+        if (role == TeamMemberRole.OWNER &&
+                authorRepository.existsByIdAndTeamMembers_Role(authorId, TeamMemberRole.OWNER)) {
+            throw new IllegalArgumentException(
+                    "Role 'OWNER' already exists for this author"
+            );
+        }
     }
 
     private void checkIfTeamMemberEmailExists(UUID authorId, String email) {

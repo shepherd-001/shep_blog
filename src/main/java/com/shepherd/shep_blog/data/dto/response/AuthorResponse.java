@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 public class AuthorResponse {
     private UUID authorId;
-    private List<UserResponse> members;
+    private List<TeamMemberResponse> members;
     private String organizationPhoneNumber;
     private String websiteAddress;
 }

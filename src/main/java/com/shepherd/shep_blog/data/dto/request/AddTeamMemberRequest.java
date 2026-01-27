@@ -1,6 +1,7 @@
 package com.shepherd.shep_blog.data.dto.request;
 
 import com.shepherd.shep_blog.data.model.enums.Gender;
+import com.shepherd.shep_blog.data.model.enums.TeamMemberRole;
 import com.shepherd.shep_blog.utils.RegexPattern;
 import com.shepherd.shep_blog.utils.ValidationMessage;
 import jakarta.validation.constraints.NotBlank;
@@ -34,4 +35,6 @@ public class AddTeamMemberRequest {
 
     @NotNull(message = ValidationMessage.NULL_GENDER)
     private Gender gender;
+
+    private TeamMemberRole  role;
 }

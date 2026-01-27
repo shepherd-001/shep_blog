@@ -4,6 +4,7 @@ import com.shepherd.shep_blog.data.model.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,6 +33,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -41,8 +43,12 @@ public class User extends BaseEntity {
                     @Index(name = "idx_user_roles_role", columnList = "role_id")
             }
     )
-    private Set<UserRole> roles;
+    private Set<UserRole> roles = new HashSet<>();
 
     private boolean enabled = false;
     private boolean emailVerified = false;
+
+    public void assignRole(UserRole role) {
+        this.roles.add(role);
+    }
 }

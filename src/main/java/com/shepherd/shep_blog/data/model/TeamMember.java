@@ -24,7 +24,7 @@ public class TeamMember {
     @Enumerated(EnumType.STRING)
     private TeamMemberRole role;
 
-    private boolean isRevoked = false;
+    private boolean revoked = false;
 
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
