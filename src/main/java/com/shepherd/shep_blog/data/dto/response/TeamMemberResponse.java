@@ -6,7 +6,6 @@ import com.shepherd.shep_blog.data.model.enums.TeamMemberRole;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Set;
 
 @Builder
 @Getter
@@ -16,7 +15,6 @@ public class TeamMemberResponse {
     private String username;
     private String email;
     private Gender gender;
-//    private Set<UserRole> roles;
     private boolean enabled;
     private boolean emailVerified;
     private boolean revoked;

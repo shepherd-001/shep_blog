@@ -35,7 +35,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -71,7 +70,6 @@ public class AuthorServiceImpl implements AuthorService{
         checkIfWebsiteAddressIsValid(request.getWebsiteAddress());
 
         User user = userMapper.mapToUser(request);
-//        user.setRoles(Set.of(roleService.getRole(SUPER_AUTHOR)));
         user.assignRole(roleService.getRole(SUPER_AUTHOR));
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user = userService.saveUser(user);
@@ -149,10 +147,9 @@ public class AuthorServiceImpl implements AuthorService{
         author.addMember(teamMember);
         author = authorRepository.save(author);
 
-        sendInvitation(sender, user);
+        sendAuthorMemberInvitation(sender, user);
         return buildAuthorResponse(author);
     }
-
 
     private Author getAuthorById(UUID authorId) {
         return authorRepository.findById(authorId).orElseThrow(
@@ -179,13 +176,27 @@ public class AuthorServiceImpl implements AuthorService{
         }
     }
 
-    private void sendInvitation(User sender, User user) {
-        String senderName = (sender.getFirstName() == null || sender.getLastName() == null)
+    private void sendAuthorMemberInvitation(User sender, User invitedUser) {
+        sendEmailVerificationIfNeeded(invitedUser);
+        String senderName = buildSenderName(sender);
+        TokenType tokenType = TokenType.AUTHOR_MEMBER_INVITATION;
+        String token = tokenService.generateToken(invitedUser.getEmail(), tokenType);
+        notificationService.sendAuthorMemberInvitation(invitedUser, token, senderName, tokenType);
+    }
+
+    private void sendEmailVerificationIfNeeded(User user){
+        if(user.isEmailVerified()){
+            log.info("User email already verified, no need to send email verification");
+            return;
+        }
+        TokenType tokenType = TokenType.EMAIL_CONFIRMATION;
+        String token = tokenService.generateToken(user.getEmail(), tokenType);
+        notificationService.sendVerificationMail(user, token, tokenType);
+    }
+
+    private String buildSenderName(User sender) {
+        return (sender.getFirstName() == null || sender.getLastName() == null)
                 ? "Team Admin"
                 : String.format("%s %s", sender.getFirstName(), sender.getLastName());
-
-        TokenType tokenType = TokenType.AUTHOR_MEMBER_INVITATION;
-        String token = tokenService.generateToken(user.getEmail(), tokenType);
-        notificationService.sendAuthorMemberInvitation(user, token, senderName, tokenType);
     }
 }

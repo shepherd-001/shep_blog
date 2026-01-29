@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class RegisterUserResponse {
-    private String userName;
+    private String username;
     private String firstName;
     private String lastName;
     private String email;

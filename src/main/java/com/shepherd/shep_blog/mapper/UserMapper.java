@@ -29,7 +29,7 @@ public interface UserMapper {
     @Mapping(target = "firstName", source = "firstName", qualifiedByName = "trim")
     @Mapping(target = "lastName", source = "lastName", qualifiedByName = "trim")
     @Mapping(target = "email", source = "email", qualifiedByName = "toLowerCaseTrim")
-    @Mapping(target = "username", ignore = true)
+    @Mapping(target = "username", source = "username", qualifiedByName = "toLowerCaseTrim")
     @Mapping(target = "password", ignore = true)
     User mapToUser(AddTeamMemberRequest request);
 

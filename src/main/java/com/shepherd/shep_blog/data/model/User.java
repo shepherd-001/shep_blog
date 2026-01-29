@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(indexes = {
-        @Index(name = "idx_user_userName", columnList = "username"),
+        @Index(name = "idx_user_username", columnList = "username"),
         @Index(name = "idx_user_email", columnList = "email"),
         @Index(name = "idx_createdAt", columnList = "createdAt")
 })

@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
         checkIfUserNameExists(request.getUsername());
 
         User user = userMapper.mapToUser(request);
-        user.setRoles(Set.of(roleService.getRole(READER)));
+        user.assignRole(roleService.getRole(READER));
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         Reader reader = Reader.builder()

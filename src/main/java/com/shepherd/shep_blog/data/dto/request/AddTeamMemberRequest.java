@@ -30,6 +30,10 @@ public class AddTeamMemberRequest {
     private String lastName;
 
     @NotBlank(message = ValidationMessage.BLANK_EMAIL)
+    @Pattern(message = ValidationMessage.INVALID_USER_NAME, regexp = RegexPattern.USER_NAME)
+    private String username;
+
+    @NotBlank(message = ValidationMessage.BLANK_EMAIL)
     @Pattern(message = ValidationMessage.INVALID_EMAIL, regexp = RegexPattern.EMAIL)
     private String email;
 

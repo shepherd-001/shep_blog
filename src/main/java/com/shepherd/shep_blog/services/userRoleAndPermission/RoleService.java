@@ -27,7 +27,7 @@ public class RoleService {
 
 //    @Cacheable(value = CACHE_NAME, key = "#name.toUpperCase()")
     public UserRole getRole(String name){
-        log.info("Loading role '{}' from DB", name);
+        log.info("==>> Loading role '{}' from DB", name);
         return userRoleRepository.findByNameEqualsIgnoreCase(name.trim())
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Role '%s' not found", name)));
     }
