@@ -11,7 +11,7 @@ import java.util.Set;
 public final class PageRequestFactory {
     public static final int DEFAULT_PAGE_SIZE = 10;
     public static final int MAX_PAGE_SIZE = 100;
-    public static final int MAX_PAGE_NUMBER = 500;
+//    public static final int MAX_PAGE_NUMBER = 500;
     public static final String DEFAULT_SORT_FIELD = "createdAt";
     public static final Sort.Direction DEFAULT_SORT_DIRECTION = Sort.Direction.DESC;
 

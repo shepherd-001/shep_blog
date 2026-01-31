@@ -18,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AddTeamMemberRequest {
+public class CreateTeamMemberRequest {
     private UUID authorId;
 
     @NotBlank(message = ValidationMessage.BLANK_FIRST_NAME)

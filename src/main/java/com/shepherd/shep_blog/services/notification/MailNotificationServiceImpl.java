@@ -97,7 +97,7 @@ public class MailNotificationServiceImpl implements MailNotificationService {
     }
 
     @Override
-    public void sendAuthorMemberInvitation(User user, String token, String inviterName, TokenType tokenType) {
+    public void sendAuthorMemberInvitation(User user, String token, String inviterName, String role, TokenType tokenType) {
         String link = buildLink("/member/invitation", Map.of(
                 "token", token,
                 "type", tokenType.name()));
@@ -109,6 +109,7 @@ public class MailNotificationServiceImpl implements MailNotificationService {
                 .variables(Map.of(
                         "inviterName", inviterName,
                         "displayName", user.getFirstName(),
+                        "role", role,
                         "invitationLink", link))
                 .build();
         mailAsyncExecutor.sendEmailAsync(emailRequest);

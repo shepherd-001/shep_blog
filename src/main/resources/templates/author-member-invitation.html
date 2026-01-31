@@ -89,7 +89,7 @@
 <div class="email-container">
     <div class="email-content">
         <div class="email-header">
-            <h1>You’ve Been Invited to Join as an Author</h1>
+<!--            <h1>You’ve Been Invited to Join as an Author</h1>-->
             <p class="greeting">
                 Hello <strong th:text="${displayName}">[Author]</strong>,
             </p>
@@ -97,7 +97,7 @@
 
         <p class="intro-text">
             <strong th:text="${inviterName}">[Inviter Name]</strong> has invited you to join
-            <strong>Sheps Blog</strong> as an author.
+            <strong>Sheps Blog</strong> as a <strong th:text="${role}">[Role]</strong>.
         </p>
 
         <p class="intro-text">

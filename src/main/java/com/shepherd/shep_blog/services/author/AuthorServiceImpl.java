@@ -1,13 +1,10 @@
 package com.shepherd.shep_blog.services.author;
 
-import com.shepherd.shep_blog.data.dto.request.AddTeamMemberRequest;
-import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
-import com.shepherd.shep_blog.data.dto.request.RegisterAuthorRequest;
+import com.shepherd.shep_blog.data.dto.request.*;
 import com.shepherd.shep_blog.data.dto.response.AuthorResponse;
 import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
-import com.shepherd.shep_blog.data.model.Author;
-import com.shepherd.shep_blog.data.model.TeamMember;
-import com.shepherd.shep_blog.data.model.User;
+import com.shepherd.shep_blog.data.dto.response.TeamMemberResponse;
+import com.shepherd.shep_blog.data.model.*;
 import com.shepherd.shep_blog.data.model.enums.TeamMemberRole;
 import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.repository.AuthorRepository;
@@ -39,8 +36,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.shepherd.shep_blog.utils.ErrorMessage.INVALID_WEBSITE_ADDRESS;
-import static com.shepherd.shep_blog.utils.RoleUtil.AUTHOR;
+import static com.shepherd.shep_blog.utils.ErrorMessage.*;
 import static com.shepherd.shep_blog.utils.RoleUtil.SUPER_AUTHOR;
 
 
@@ -77,6 +73,7 @@ public class AuthorServiceImpl implements AuthorService{
         TeamMember teamMember = TeamMember.builder()
                 .user(user)
                 .role(TeamMemberRole.OWNER)
+                .status(TeamMemberStatus.INVITED)
                 .build();
 
         Author author = Author.builder()
@@ -125,7 +122,7 @@ public class AuthorServiceImpl implements AuthorService{
     @Transactional
     @CacheEvict(value = AUTHOR_CACHE_NAME, key = "'author:' + #request.authorId")
     @Override
-    public AuthorResponse addTeamMember(AddTeamMemberRequest request) {
+    public TeamMemberResponse inviteTeamMember(InviteTeamMemberRequest request) {
         Author author = getAuthorById(request.getAuthorId());
 
         User sender = SecurityUtils.getCurrentPrincipal().getUser();
@@ -133,21 +130,57 @@ public class AuthorServiceImpl implements AuthorService{
         checkIfTeamMemberEmailExists(author.getId(), request.getEmail());
         validateTeamMemberRole(author.getId(), request.getRole());
 
-        User user = userService.getByEmailIgnoreCase(request.getEmail())
-        .orElseGet(() -> userMapper.mapToUser(request));
+        User invitedUser = userService.getByEmailIgnoreCase(request.getEmail()).orElseThrow(
+                ()-> new ResourceNotFoundException("User must exist before being invited"));
+        invitedUser = userService.saveUser(invitedUser);
 
-        user.assignRole(roleService.getRole(AUTHOR));
+        TeamMember teamMember = TeamMember.builder()
+                .user(invitedUser)
+                .role(request.getRole())
+                .status(TeamMemberStatus.INVITED)
+                .build();
+        author.addMember(teamMember);
+        authorRepository.save(author);
+
+        sendAuthorMemberInvitation(sender, teamMember);
+        return authorMapper.mapToTeamMemberResponse(teamMember);
+    }
+
+    private void sendAuthorMemberInvitation(User sender, TeamMember teamMember) {
+        String senderName = buildSenderName(sender);
+        User invitedUser = teamMember.getUser();
+        TokenType tokenType = TokenType.AUTHOR_MEMBER_INVITATION;
+        String token = tokenService.generateToken(invitedUser.getEmail(), tokenType);
+        String role = teamMember.getRole().name();
+        notificationService.sendAuthorMemberInvitation(invitedUser, token, senderName, role, tokenType);
+    }
+
+    @Transactional
+    @CacheEvict(value = AUTHOR_CACHE_NAME, key = "'author:' + #request.authorId")
+    @Override
+    public AuthorResponse createTeamMember(CreateTeamMemberRequest request) {
+        Author author = getAuthorById(request.getAuthorId());
+
+        User sender = SecurityUtils.getCurrentPrincipal().getUser();
+        authorizeInvite(author.getId(), sender.getId());
+        checkIfTeamMemberEmailExists(author.getId(), request.getEmail());
+        validateTeamMemberRole(author.getId(), request.getRole());
+
+        User user = userMapper.mapToUser(request);
         user = userService.saveUser(user);
 
         TeamMember teamMember = TeamMember.builder()
                 .user(user)
                 .role(request.getRole())
+                .status(TeamMemberStatus.INVITED)
                 .build();
 
         author.addMember(teamMember);
         author = authorRepository.save(author);
 
-        sendAuthorMemberInvitation(sender, user);
+        TokenType tokenType = TokenType.EMAIL_CONFIRMATION;
+        String token = tokenService.generateToken(user.getEmail(), tokenType);
+        notificationService.sendVerificationMail(user, token, tokenType);
         return buildAuthorResponse(author);
     }
 
@@ -157,7 +190,7 @@ public class AuthorServiceImpl implements AuthorService{
     }
 
     private void authorizeInvite(UUID authorId, UUID userId) {
-        if(!teamMemberRepository.existsByAuthorIdAndUserId(authorId, userId))
+        if(!teamMemberRepository.existsByAuthorIdAndUserIdAndStatus(authorId, userId, TeamMemberStatus.ACTIVE))
             throw new UnauthorizedException("User is not allowed to invite members to this author");
     }
 
@@ -171,27 +204,9 @@ public class AuthorServiceImpl implements AuthorService{
     }
 
     private void checkIfTeamMemberEmailExists(UUID authorId, String email) {
-        if(teamMemberRepository.existsByAuthorIdAndUserEmailIgnoreCase(authorId, email)){
+        if(teamMemberRepository.existsByAuthorIdAndUserEmailIgnoreCase(authorId, email.trim())){
             throw new AlreadyExistsException("The user is already a member of this author team");
         }
-    }
-
-    private void sendAuthorMemberInvitation(User sender, User invitedUser) {
-        sendEmailVerificationIfNeeded(invitedUser);
-        String senderName = buildSenderName(sender);
-        TokenType tokenType = TokenType.AUTHOR_MEMBER_INVITATION;
-        String token = tokenService.generateToken(invitedUser.getEmail(), tokenType);
-        notificationService.sendAuthorMemberInvitation(invitedUser, token, senderName, tokenType);
-    }
-
-    private void sendEmailVerificationIfNeeded(User user){
-        if(user.isEmailVerified()){
-            log.info("User email already verified, no need to send email verification");
-            return;
-        }
-        TokenType tokenType = TokenType.EMAIL_CONFIRMATION;
-        String token = tokenService.generateToken(user.getEmail(), tokenType);
-        notificationService.sendVerificationMail(user, token, tokenType);
     }
 
     private String buildSenderName(User sender) {
@@ -199,4 +214,37 @@ public class AuthorServiceImpl implements AuthorService{
                 ? "Team Admin"
                 : String.format("%s %s", sender.getFirstName(), sender.getLastName());
     }
+
+    @CacheEvict(value = AUTHOR_CACHE_NAME, key = "'author:' + #authorId")
+    @Override
+    public TeamMemberResponse activateTeamMember(UUID authorId) {
+        User currentUser = SecurityUtils.getCurrentPrincipal().getUser();
+
+        TeamMember teamMember = getTeamMember(authorId, currentUser.getId());
+        activate(teamMember);
+        teamMember = teamMemberRepository.save(teamMember);
+        return authorMapper.mapToTeamMemberResponse(teamMember);
+    }
+
+    private TeamMember getTeamMember(UUID authorId, UUID userId) {
+        return teamMemberRepository.findByAuthor_IdAndUser_Id(authorId, userId).orElseThrow(
+                ()-> new ResourceNotFoundException(TEAM_MEMBER_NOT_FOUND));
+    }
+
+    private void activate(TeamMember teamMember) {
+        TeamMemberStatus status = teamMember.getStatus();
+        if(status == TeamMemberStatus.ACTIVE){
+            return;
+        }
+        if(status != TeamMemberStatus.INVITED) {
+            throw new IllegalStateException("Invalid activation status");
+        }
+       teamMember.setStatus(TeamMemberStatus.ACTIVE);
+    }
+
+//    private void validateTeamMemberStatus(TeamMember teamMember){
+//        if (teamMember.getStatus() != TeamMemberStatus.ACTIVE) {
+//            throw new UnauthorizedException("Team member is not active");
+//        }
+//    }
 }

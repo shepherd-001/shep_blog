@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.mapper;
 
-import com.shepherd.shep_blog.data.dto.request.AddTeamMemberRequest;
+import com.shepherd.shep_blog.data.dto.request.CreateTeamMemberRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterAuthorRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterReaderRequest;
 import com.shepherd.shep_blog.data.dto.response.*;
@@ -31,7 +31,7 @@ public interface UserMapper {
     @Mapping(target = "email", source = "email", qualifiedByName = "toLowerCaseTrim")
     @Mapping(target = "username", source = "username", qualifiedByName = "toLowerCaseTrim")
     @Mapping(target = "password", ignore = true)
-    User mapToUser(AddTeamMemberRequest request);
+    User mapToUser(CreateTeamMemberRequest request);
 
     UserResponse mapToUserResponse(User user);
 

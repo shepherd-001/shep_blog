@@ -23,9 +23,9 @@ public class PaginationRequest {
         if(pageNumber == null || pageNumber < 1) {
             return 0; // Sprint data 0-based page
         }
-        if(pageNumber > PageRequestFactory.MAX_PAGE_NUMBER) {
-            throw new IllegalArgumentException("Page number exceeds maximum allowed");
-        }
+//        if(pageNumber > PageRequestFactory.MAX_PAGE_NUMBER) {
+//            throw new IllegalArgumentException("Page number exceeds maximum allowed");
+//        }
         return pageNumber - 1; // Spring data 0-based
     }
 

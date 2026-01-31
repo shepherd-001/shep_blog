@@ -53,9 +53,9 @@ public class AuthServiceImpl implements AuthService {
         User user = userService.getByEmail(tokenEntity.getEmail());
 
         if(user.isEmailVerified())
-            throw new UserAlreadyEnabledException("User is already verified");
-       if (user.isEnabled())
-            throw new UserAlreadyEnabledException("User is already enabled");
+            throw new UserAlreadyEnabledException(USER_ALREADY_VERIFIED);
+        if (user.isEnabled())
+            throw new UserAlreadyEnabledException(USER_ALREADY_ENABLED);
 
         user.setEnabled(true);
         user.setEmailVerified(true);
@@ -63,6 +63,7 @@ public class AuthServiceImpl implements AuthService {
         user = userService.saveUser(user);
         return userMapper.mapToVerifyEmailResponse(user, generateJwtToken(user));
     }
+
 
     @Override
     public AuthResponse login(LoginRequest loginRequest) {

@@ -15,6 +15,11 @@ public final class ErrorMessage {
     public static final String INVITATION_ALREADY_PROCESSED = "Invitation not found";
     public static final String TOKEN_IS_INVALID_OR_EXPIRED = "Token is invalid or expired";
 
+    public static final String USER_ALREADY_VERIFIED = "User is already verified";
+    public static final String USER_ALREADY_ENABLED = "User is already enabled";
+
+    public static final String TEAM_MEMBER_NOT_FOUND = "Team member not found";
+
 
     private ErrorMessage() {
         throw new UnsupportedOperationException(NON_INSTANTIABLE_UTILITY_CLASS);

@@ -1,6 +1,7 @@
 package com.shepherd.shep_blog.controllers;
 
-import com.shepherd.shep_blog.data.dto.request.AddTeamMemberRequest;
+import com.shepherd.shep_blog.data.dto.request.CreateTeamMemberRequest;
+import com.shepherd.shep_blog.data.dto.request.InviteTeamMemberRequest;
 import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterAuthorRequest;
 import com.shepherd.shep_blog.data.dto.response.ApiResponse;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,10 +34,24 @@ public class AuthorController {
                 .success(authorService.getAllAuthor(paginationRequest)));
     }
 
-    @PostMapping("/team-member/add")
+    @PostMapping("/team-member/invite")
     @PreAuthorize("hasRole('SUPER_AUTHOR')")
-    public ResponseEntity<ApiResponse<?>> addTeamMember(@Valid @RequestBody AddTeamMemberRequest request) {
+    public ResponseEntity<ApiResponse<?>> createTeamMember(@Valid @RequestBody InviteTeamMemberRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse
-                .success("Team member added successfully", authorService.addTeamMember(request)));
+                .success("Team member invited successfully", authorService.inviteTeamMember(request)));
+    }
+
+    @PostMapping("/team-member/create")
+    @PreAuthorize("hasRole('SUPER_AUTHOR')")
+    public ResponseEntity<ApiResponse<?>> createTeamMember(@Valid @RequestBody CreateTeamMemberRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse
+                .success("Team member created successfully", authorService.createTeamMember(request)));
+    }
+
+    @PutMapping("/team-member/activate/{authorId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<?>> activateTeamMember(@PathVariable UUID authorId) {
+        return ResponseEntity.ok(ApiResponse.success("Team member activated successfully",
+                authorService.activateTeamMember(authorId)));
     }
 }

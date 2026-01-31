@@ -16,6 +16,7 @@ import com.shepherd.shep_blog.exceptions.ShepBlogException;
 import com.shepherd.shep_blog.services.notification.MailNotificationService;
 import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,7 +69,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
     }
 
     @Override
-//    @Transactional
+    @Transactional
     public List<InvitationResponse> inviteAdmin(InviteAdminRequest inviteAdminRequest) {
         List<InvitationResponse> invitationResponses = new ArrayList<>();
         for(String email : inviteAdminRequest.getAdminEmails()){
