@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface AuthorService {
     AuthorResponse registerAuthor(RegisterAuthorRequest registerAuthorRequest);
     PaginationResponse<AuthorResponse> getAllAuthor(PaginationRequest paginationRequest);
-    AuthorResponse createTeamMember(CreateTeamMemberRequest createTeamMemberRequest);
+    TeamMemberResponse createTeamMember(CreateTeamMemberRequest createTeamMemberRequest);
     TeamMemberResponse inviteTeamMember(InviteTeamMemberRequest inviteTeamMemberRequest);
     TeamMemberResponse activateTeamMember(UUID authorId);
 }

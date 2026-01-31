@@ -158,8 +158,9 @@ public class AuthorServiceImpl implements AuthorService{
     @Transactional
     @CacheEvict(value = AUTHOR_CACHE_NAME, key = "'author:' + #request.authorId")
     @Override
-    public AuthorResponse createTeamMember(CreateTeamMemberRequest request) {
+    public TeamMemberResponse createTeamMember(CreateTeamMemberRequest request) {
         Author author = getAuthorById(request.getAuthorId());
+        userService.checkIfUserEmailExists(request.getEmail());
 
         User sender = SecurityUtils.getCurrentPrincipal().getUser();
         authorizeInvite(author.getId(), sender.getId());
@@ -176,12 +177,12 @@ public class AuthorServiceImpl implements AuthorService{
                 .build();
 
         author.addMember(teamMember);
-        author = authorRepository.save(author);
+        authorRepository.save(author);
 
         TokenType tokenType = TokenType.EMAIL_CONFIRMATION;
         String token = tokenService.generateToken(user.getEmail(), tokenType);
         notificationService.sendVerificationMail(user, token, tokenType);
-        return buildAuthorResponse(author);
+        return authorMapper.mapToTeamMemberResponse(teamMember);
     }
 
     private Author getAuthorById(UUID authorId) {

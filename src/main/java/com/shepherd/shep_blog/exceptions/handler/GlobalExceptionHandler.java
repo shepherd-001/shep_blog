@@ -8,6 +8,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -96,6 +97,13 @@ public class GlobalExceptionHandler {
         String message = "Invalid value for parameter '%s': %s".formatted(ex.getName(), ex.getValue());
         return ResponseEntity.badRequest().body(ApiResponse.error(message, request));
     }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<?>> handleJsonParseError(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error("Invalid value provided for one or more request fields", request));
+    }
+
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiResponse<?>> handleException(ConstraintViolationException ex, HttpServletRequest request) {
