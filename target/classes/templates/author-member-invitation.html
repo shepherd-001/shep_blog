@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Author Invitation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f9f4;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+        .email-container {
+            width: 100%;
+            background-color: #f4f9f4;
+            padding: 20px;
+        }
+        .email-content {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        .email-header {
+            text-align: center;
+            color: #333;
+        }
+        .email-header h1 {
+            margin: 0;
+            font-size: 6vw;
+            color: #4CAF50;
+        }
+        .greeting {
+            font-size: 4vw;
+            color: #333;
+            margin-top: 10px;
+        }
+        .intro-text {
+            font-size: 4vw;
+            color: #555;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+        .confirmation-link-container {
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: center;
+            margin-top: 20px;
+            border-radius: 6px;
+            font-size: 5vw;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 3.5vw;
+            color: #777;
+        }
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            font-size: 4.5vw;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        @media screen and (min-width: 600px) {
+            .email-header h1 { font-size: 28px; }
+            .greeting { font-size: 18px; }
+            .intro-text { font-size: 16px; }
+            .footer { font-size: 14px; }
+            .btn { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="email-content">
+        <div class="email-header">
+<!--            <h1>You’ve Been Invited to Join as an Author</h1>-->
+            <p class="greeting">
+                Hello <strong th:text="${displayName}">[Author]</strong>,
+            </p>
+        </div>
+
+        <p class="intro-text">
+            <strong th:text="${inviterName}">[Inviter Name]</strong> has invited you to join
+            <strong>Sheps Blog</strong> as a <strong th:text="${role}">[Role]</strong>.
+        </p>
+
+        <p class="intro-text">
+            Sheps Blog is a platform where thoughtful stories, expert insights, and meaningful ideas come together.
+            As an author, you’ll be able to publish articles, build your profile, and connect with a growing audience
+            that values quality content.
+        </p>
+
+        <p class="intro-text">
+            To accept this invitation and activate your author account, please click the button below.
+        </p>
+
+        <div class="confirmation-link-container">
+            <a th:href="${invitationLink}" class="btn">Accept Invitation</a>
+        </div>
+
+        <p class="intro-text">
+            If you weren’t expecting this invitation, you can safely ignore this email.
+            The invitation will expire automatically if not accepted.
+        </p>
+
+        <div class="footer">
+            <p>
+                Need help? <a href="mailto:support@shepblog.com">Contact Support</a>.
+            </p>
+            <p>
+                Warm regards,<br>
+                <strong th:text="${inviterName}">[Inviter Name]</strong><br>
+                Sheps Blog
+            </p>
+
+            <p style="margin-top: 20px; color: #999; font-size: 13px;">
+                © <span th:text="${T(java.time.Year).now().value}">2025</span> Sheps Blog. All Rights Reserved.
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
