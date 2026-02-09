@@ -11,7 +11,7 @@
     <groupId>com.shepherd</groupId>
     <artifactId>shep_blog</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>contentManagement</name>
+    <name>shep_blog</name>
     <description>Demo project for Shepherd Blog</description>
     <url/>
     <licenses>

@@ -8,8 +8,6 @@ logging:
 spring:
   application:
     name: ShepBlog
-  profiles:
-    active: ${ACTIVE_PROFILE:local}
 
   datasource:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?createDatabaseIfNotExist=true
@@ -65,7 +63,7 @@ spring:
             required: true
           from: ${MAIL_FROM_EMAIL}
           connectiontimeout: 10000
-          timeout: 10000
+          timeout: 15000
           writetimeout: 10000
 
 executor:

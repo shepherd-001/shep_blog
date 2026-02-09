@@ -116,7 +116,7 @@ public class TokenServiceImpl implements TokenService{
 
         if(keys == null || keys.isEmpty()) return;
 
-        log.info("Revoking {} {} token(s) for user {}", keys.size(), tokenType.name(), userEmail);
+        log.info("==>> Revoking {} {} token(s) for user {}", keys.size(), tokenType.name(), userEmail);
 
         for(Object keyObj : keys){
             String key = keyObj.toString();

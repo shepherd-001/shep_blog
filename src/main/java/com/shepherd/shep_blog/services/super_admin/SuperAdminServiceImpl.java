@@ -60,12 +60,16 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                 .email(superAdminEmail)
                 .password(passwordEncoder.encode(superAdminPassword))
                 .roles(Set.of(role))
-                .enabled(true)
-                .emailVerified(true)
+                .enabled(false)
+                .emailVerified(false)
                 .build();
 
         userRepository.save(admin);
         log.info("==>> Super admin created successfully");
+
+        TokenType tokenType = TokenType.ADMIN_INVITATION;
+        String token = tokenService.generateToken(admin.getEmail(), tokenType);
+        mailNotificationService.sendAdminInvitation(admin, token, tokenType);
     }
 
     @Override
