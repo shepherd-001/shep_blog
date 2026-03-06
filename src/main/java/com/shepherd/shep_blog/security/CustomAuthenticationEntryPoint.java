@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -30,22 +29,28 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             @Nonnull AuthenticationException authException) throws IOException {
 
         String requestURI = request.getRequestURI();
+
         if(response.isCommitted()){
-            log.warn("Response already committed for unauthorized request: {}", requestURI);
+            log.warn("Response already commited for unauthorized request: {}", requestURI);
             return;
         }
 
-        log.info("Unauthorized access attempt: {}", requestURI);
+        log.warn("Unauthorized access attempt: {} | Reason: {}", requestURI, authException.getMessage());
+
         prepareUnauthorizedResponse(request, response);
     }
 
     private void prepareUnauthorizedResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
 
         ApiResponse<?> errorResponse = ApiResponse.error(ERROR_MESSAGE, request);
+
         try (PrintWriter writer = response.getWriter()) {
-            writer.write(objectMapper.writeValueAsString(errorResponse));
+            objectMapper.writeValue(writer, errorResponse);
+        } catch (Exception ex) {
+            log.error("Failed to write unauthorized response", ex);
         }
     }
 }

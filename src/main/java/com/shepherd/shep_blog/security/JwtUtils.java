@@ -89,19 +89,18 @@ public class JwtUtils {
     }
 
     public Instant getExpiration(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.getExpiration().toInstant();
+        return extractAllClaims(token).getExpiration().toInstant();
     }
 
     public boolean isValidToken(String token, String email) {
         Claims claims = extractAllClaims(token);
-        Instant expiration = getExpiration(token);
-        Instant now = Instant.now();
 
         String subject = claims.getSubject();
+        Instant expiration = claims.getExpiration().toInstant();
+
         return subject != null
                 && subject.equalsIgnoreCase(email)
-                && expiration.isAfter(now);
+                && expiration.isAfter(Instant.now());
     }
 
     public String getJwtId(String token){
