@@ -35,6 +35,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
+            ShepBlogException.class,
             IllegalArgumentException.class,
             IllegalStateException.class,
             UserAlreadyEnabledException.class,
@@ -56,7 +57,6 @@ public class GlobalExceptionHandler {
             BadCredentialsException.class,
             UserNotVerifiedException.class,
             UnauthorizedException.class,
-//            AuthorizationDeniedException.class,
             DisabledException.class
     })
     public ResponseEntity<ApiResponse<?>> handleUnauthorized(Exception ex, HttpServletRequest request) {
@@ -100,6 +100,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<?>> handleJsonParseError(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        log.error("==>> Http message not readable exception {}", ex.getMessage());
         return ResponseEntity.badRequest()
                 .body(ApiResponse.error("Invalid value provided for one or more request fields", request));
     }
