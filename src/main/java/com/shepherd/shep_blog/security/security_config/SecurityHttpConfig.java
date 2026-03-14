@@ -17,7 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -98,8 +98,7 @@ public class SecurityHttpConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return new Argon2PasswordEncoder(16, 32, 2,
-                65536, 3);
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
