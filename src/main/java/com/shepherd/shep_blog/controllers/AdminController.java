@@ -34,7 +34,11 @@ public class AdminController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<?> getAllActiveAdmins(@RequestBody PaginationRequest paginationRequest) {
+    public ResponseEntity<?> getAllActiveAdmins(@RequestParam(required = false, defaultValue = "1") int page,
+                                                @RequestParam(required = false, defaultValue = "10") int size,
+                                                @RequestParam(required = false) String sortBy,
+                                                @RequestParam(required = false) String sortDirection){
+        PaginationRequest paginationRequest = new PaginationRequest(page, size, sortBy, sortDirection);
         return ResponseEntity.ok(ApiResponse.success(adminService.getAllActiveAdmins(paginationRequest)));
     }
 }

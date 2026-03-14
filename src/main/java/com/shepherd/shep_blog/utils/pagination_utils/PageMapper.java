@@ -16,8 +16,8 @@ public final class PageMapper {
                 : page.stream().map(mapper).toList();
         return PaginationResponse.<T>builder()
                 .content(content)
-                .pageNumber(page.getNumber() + 1) // 1 based page number
-                .pageSize(page.getSize())
+                .page(page.getNumber() + 1) // 1 based page number
+                .size(page.getSize())
                 .numberOfElements(page.getNumberOfElements())
                 .totalElements(page.getTotalElements())
                 .totalPages(page.getTotalPages())
@@ -30,8 +30,8 @@ public final class PageMapper {
     public static <T> PaginationResponse<T> map(Page<T> page) {
         return PaginationResponse.<T>builder()
                 .content(page.getContent())
-                .pageNumber(page.getNumber() + 1) // 1 based page number
-                .pageSize(page.getSize())
+                .page(page.getNumber() + 1) // 1 based page number
+                .size(page.getSize())
                 .numberOfElements(page.getNumberOfElements())
                 .totalElements(page.getTotalElements())
                 .totalPages(page.getTotalPages())

@@ -29,7 +29,11 @@ public class AuthorController {
 
     @GetMapping("/all")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'READER')")
-    public ResponseEntity<ApiResponse<?>> getAllAuthors(@RequestBody PaginationRequest paginationRequest){
+    public ResponseEntity<ApiResponse<?>> getAllAuthors(@RequestParam(required = false, defaultValue = "1") int page,
+                                                        @RequestParam(required = false, defaultValue = "10") int size,
+                                                        @RequestParam(required = false) String sortBy,
+                                                        @RequestParam(required = false) String sortDirection){
+        PaginationRequest paginationRequest = new PaginationRequest(page, size, sortBy, sortDirection);
         return ResponseEntity.ok(ApiResponse
                 .success(authorService.getAllAuthor(paginationRequest)));
     }

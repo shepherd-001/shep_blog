@@ -14,26 +14,26 @@ import java.util.Set;
 @Getter
 @Setter
 public class PaginationRequest {
-    private Integer pageNumber;
-    private Integer pageSize;
+    private Integer page;
+    private Integer size;
     private String sortBy;
     private String sortDirection;
 
     public int resolvedPageNumber() {
-        if(pageNumber == null || pageNumber < 1) {
+        if(page == null || page < 1) {
             return 0; // Sprint data 0-based page
         }
 //        if(pageNumber > PageRequestFactory.MAX_PAGE_NUMBER) {
 //            throw new IllegalArgumentException("Page number exceeds maximum allowed");
 //        }
-        return pageNumber - 1; // Spring data 0-based
+        return page - 1; // Spring data 0-based
     }
 
     public int resolvedPageSize() {
-        if(pageSize == null || pageSize < 1) {
+        if(size == null || size < 1) {
             return PageRequestFactory.DEFAULT_PAGE_SIZE;
         }
-        return Math.min(pageSize, PageRequestFactory.MAX_PAGE_SIZE);
+        return Math.min(size, PageRequestFactory.MAX_PAGE_SIZE);
     }
 
     public String resolvedSortField(Set<String> allowedSortFields) {

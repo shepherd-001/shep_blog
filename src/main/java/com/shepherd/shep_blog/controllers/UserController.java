@@ -25,8 +25,12 @@ public class UserController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<ApiResponse<?>> getAllEnabledUsers(@RequestParam boolean enabled,
-                                                             @RequestBody PaginationRequest paginationRequest) {
+    public ResponseEntity<ApiResponse<?>> getAllEnabledUsers(@RequestParam(required = false, defaultValue = "1") int page,
+                                                             @RequestParam(required = false, defaultValue = "10") int size,
+                                                             @RequestParam(required = false) String sortBy,
+                                                             @RequestParam(required = false) String sortDirection,
+                                                             @RequestParam(defaultValue = "true") boolean enabled){
+        PaginationRequest paginationRequest = new PaginationRequest(page, size, sortBy, sortDirection);
         return ResponseEntity.ok(ApiResponse
                 .success(userService.getAllEnabledUser(enabled, paginationRequest)));
     }

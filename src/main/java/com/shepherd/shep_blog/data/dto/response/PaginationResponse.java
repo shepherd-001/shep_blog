@@ -13,8 +13,8 @@ import java.util.List;
 @Getter
 public class PaginationResponse<T> {
     private List<T> content;
-    private int pageNumber; // 1 based.
-    private int pageSize;
+    private int page; // 1 based.
+    private int size;
     private int numberOfElements;
     private long totalElements;
     private int totalPages;

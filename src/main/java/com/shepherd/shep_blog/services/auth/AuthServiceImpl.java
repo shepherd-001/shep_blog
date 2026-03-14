@@ -72,6 +72,7 @@ public class AuthServiceImpl implements AuthService {
 
         AuthenticatedUser authenticatedUser = (AuthenticatedUser) authentication.getPrincipal();
         User user = authenticatedUser.getUser();
+        log.info("User {} authenticated successfully", user.getEmail());
         return generateJwtToken(user);
     }
 

@@ -3,7 +3,6 @@ package com.shepherd.shep_blog.security.security_config;
 import com.shepherd.shep_blog.security.AllowedURIs;
 import com.shepherd.shep_blog.security.CustomAuthenticationEntryPoint;
 import com.shepherd.shep_blog.security.CustomAuthorizationFilter;
-import com.shepherd.shep_blog.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -37,40 +37,55 @@ public class SecurityHttpConfig {
     private final CustomAuthorizationFilter authorizationFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final SecurityProperties securityProperties;
+    private final DaoAuthenticationProvider authenticationProvider;
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .exceptionHandling(handler ->
-                        handler.authenticationEntryPoint(authenticationEntryPoint))
-                .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers(AllowedURIs.allowedEndpoints()).permitAll()
-                                .anyRequest().authenticated())
+                .exceptionHandling(ex ->
+                        ex.authenticationEntryPoint(authenticationEntryPoint))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .authorizeHttpRequests(auth ->
+                        auth.requestMatchers(AllowedURIs.allowedEndpoints())
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated())
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers
                         .httpStrictTransportSecurity(hsts -> hsts
                                 .includeSubDomains(true)
                                 .maxAgeInSeconds(31536000) // 1 year
                                 .preload(true))
-                        .referrerPolicy(referrerPolicy -> referrerPolicy.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
+                        .referrerPolicy(referrer ->
+                                referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny) // prevent clickjacking
+                        .contentTypeOptions(Customizer.withDefaults())
+                        .cacheControl(Customizer.withDefaults())
                         .addHeaderWriter((request, response) ->
-                                response.setHeader("Permissions-Policy", "camera=(self), microphone=(self)"))
-                        .xssProtection(Customizer.withDefaults())
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
+                                response.setHeader("Permissions-Policy",
+                                        "camera=(self), microphone=(self)"))
                         .contentSecurityPolicy(csp ->
-                                csp.policyDirectives("default-src 'self'; script-src 'self' 'strict-dynamic'; object-src 'none'; base-uri 'self';"))
+                                csp.policyDirectives("default-src 'self'; " +
+                                        "script-src 'self'; " +
+                                        "style-src 'self' 'unsafe-inline'; " +
+                                        "img-src 'self' data:; " +
+                                        "font-src 'self'; " +
+                                        "object-src 'none'; " +
+                                        "base-uri 'self'; " +
+                                        "form-action 'self'; " +
+                                        "frame-ancestors 'none'; "))
                 )
                 .build();
     }
 
     private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(securityProperties.getAllowedOrigins());
+        configuration.setAllowedOriginPatterns(securityProperties.getAllowedOrigins());
         configuration.setAllowedHeaders(securityProperties.getAllowedHeaders());
         configuration.setAllowedMethods(securityProperties.getAllowedMethods());
         configuration.setAllowCredentials(true);
@@ -83,7 +98,13 @@ public class SecurityHttpConfig {
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService,
+    public PasswordEncoder passwordEncoder(){
+        return new Argon2PasswordEncoder(16, 32, 2,
+                65536, 3);
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
                                                             PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
@@ -93,10 +114,5 @@ public class SecurityHttpConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(12);
     }
 }
