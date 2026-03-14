@@ -37,11 +37,10 @@ public class SecurityHttpConfig {
     private final CustomAuthorizationFilter authorizationFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final SecurityProperties securityProperties;
-    private final DaoAuthenticationProvider authenticationProvider;
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -49,7 +48,7 @@ public class SecurityHttpConfig {
                         ex.authenticationEntryPoint(authenticationEntryPoint))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
+                .authenticationProvider(authenticationProvider(userDetailsService, passwordEncoder))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(AllowedURIs.allowedEndpoints())
                                 .permitAll()

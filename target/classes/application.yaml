@@ -5,11 +5,11 @@ logging:
   level:
     org.springframework.web: INFO
 
-springdoc:
-  api-docs:
-    enabled: ${ENABLE_SPRING_DOC}
-  swagger-ui:
-    enabled: ${ENABLE_SWAGGER_UI}
+#springdoc:
+#  api-docs:
+#    enabled: ${ENABLE_SPRING_DOC}
+#  swagger-ui:
+#    enabled: ${ENABLE_SWAGGER_UI}
 
 spring:
   application:
