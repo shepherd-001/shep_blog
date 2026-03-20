@@ -1,6 +1,5 @@
 package com.shepherd.shep_blog.services.token;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shepherd.shep_blog.data.model.TokenEntity;
 import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.exceptions.ShepTokenException;
@@ -11,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;

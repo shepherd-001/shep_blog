@@ -2,6 +2,8 @@ package com.shepherd.shep_blog.config;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.CacheErrorHandler;
+import org.springframework.cache.interceptor.LoggingCacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -32,5 +34,10 @@ public class CacheConfig {
                 .cacheDefaults(config)
                 .transactionAware()
                 .build();
+    }
+
+    @Bean
+    public CacheErrorHandler errorHandler(){
+        return new LoggingCacheErrorHandler();
     }
 }
