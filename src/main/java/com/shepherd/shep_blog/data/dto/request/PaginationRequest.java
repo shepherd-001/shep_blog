@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 
 import java.util.Set;
@@ -13,6 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@Slf4j
 public class PaginationRequest {
     private Integer page;
     private Integer size;
@@ -45,9 +47,16 @@ public class PaginationRequest {
             return PageRequestFactory.DEFAULT_SORT_FIELD;
         }
         String trimmed = sortBy.trim();
-        return allowedSortFields.contains(trimmed)
-                ? trimmed
-                : PageRequestFactory.DEFAULT_SORT_FIELD;
+        return allowedSortFields.stream()
+                .filter(field -> field.equalsIgnoreCase(trimmed))
+                .findFirst()
+                .orElseGet(()-> {
+                    log.warn("==>> Invalid sortBy '{}' received. Falling back to '{}'", trimmed, PageRequestFactory.DEFAULT_SORT_FIELD);
+                    return PageRequestFactory.DEFAULT_SORT_FIELD;
+                });
+//        return allowedSortFields.contains(trimmed)
+//                ? trimmed
+//                : PageRequestFactory.DEFAULT_SORT_FIELD;
     }
 
     public Sort.Direction resolvedSortDirection() {

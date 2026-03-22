@@ -15,6 +15,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @MappedSuperclass
 @Getter
@@ -30,11 +31,11 @@ public abstract class BaseEntity {
 
     @CreatedBy
     @Column(updatable = false)
-    private String createdBy;
+    private UUID createdBy;
 
     @LastModifiedDate
     private Instant lastModifiedAt;
 
     @LastModifiedBy
-    private String lastModifiedBy;
+    private UUID lastModifiedBy;
 }
