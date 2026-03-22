@@ -1,11 +1,11 @@
 package com.shepherd.shep_blog.data.model;
 
+import com.shepherd.shep_blog.data.model.baseEntities.BaseEntity;
 import com.shepherd.shep_blog.data.model.enums.ReactionType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(
@@ -16,10 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Reaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Reaction extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReactionType type;
     @ManyToOne(fetch = FetchType.LAZY)

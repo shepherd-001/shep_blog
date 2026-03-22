@@ -1,9 +1,10 @@
 package com.shepherd.shep_blog.data.model;
 
-import jakarta.persistence.*;
+import com.shepherd.shep_blog.data.model.baseEntities.BaseEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import lombok.*;
-
-import java.util.UUID;
 
 @Entity
 @Table(indexes = @Index(name = "idx_tag_name", columnList = "name"))
@@ -12,10 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class Tag {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Tag extends BaseEntity {
     private String name;
     private String slug;
 }

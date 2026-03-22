@@ -1,4 +1,4 @@
-package com.shepherd.shep_blog.data.model;
+package com.shepherd.shep_blog.data.model.baseEntities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -18,13 +18,13 @@ import java.time.Instant;
 import java.util.UUID;
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@EntityListeners(AuditingEntityListener.class)
-public abstract class BaseEntity {
+public abstract class AuditableEntity extends BaseEntity{
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private Instant createdAt;

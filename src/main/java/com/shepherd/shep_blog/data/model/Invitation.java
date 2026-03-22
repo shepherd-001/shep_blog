@@ -1,11 +1,11 @@
 package com.shepherd.shep_blog.data.model;
 
+import com.shepherd.shep_blog.data.model.baseEntities.AuditableEntity;
 import com.shepherd.shep_blog.data.model.enums.InvitationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Builder
@@ -16,11 +16,7 @@ import java.util.UUID;
 @Table(name = "invitation", indexes = {
         @Index(columnList = "status")
 })
-public class Invitation extends BaseEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
+public class Invitation extends AuditableEntity {
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

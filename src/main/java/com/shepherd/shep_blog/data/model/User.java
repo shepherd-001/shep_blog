@@ -1,12 +1,12 @@
 package com.shepherd.shep_blog.data.model;
 
+import com.shepherd.shep_blog.data.model.baseEntities.AuditableEntity;
 import com.shepherd.shep_blog.data.model.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
@@ -19,10 +19,7 @@ import java.util.UUID;
         @Index(name = "idx_user_email", columnList = "email"),
         @Index(name = "idx_createdAt", columnList = "createdAt")
 })
-public class User extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class User extends AuditableEntity {
     private String firstName;
     private String lastName;
     @Column(unique = true)
