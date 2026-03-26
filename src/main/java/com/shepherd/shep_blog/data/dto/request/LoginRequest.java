@@ -19,5 +19,6 @@ public class LoginRequest {
     private String email;
 
     @NotBlank(message = ValidationMessage.BLANK_PASSWORD)
+    @Pattern(message = ValidationMessage.INVALID_PASSWORD, regexp = RegexPattern.PASSWORD)
     private String password;
 }
