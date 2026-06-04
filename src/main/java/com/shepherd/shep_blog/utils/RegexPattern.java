@@ -5,6 +5,8 @@ public final class RegexPattern {
     public static final String PASSWORD = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,20}$";
     public static final String PHONE_NUMBER = "^\\+?[0-9]{7,15}$";
     public static final String PERSON_NAME = "^(?!.* {2})(?!.*'{2})(?!.*-{2})(?!.*\\.{2})[\\p{L}\\p{M}'\\-\\. ]{1,50}$";
+    // ^(?=.{2,50}$)\p{L}[\p{L}\p{M}]*(?:[ '\-.]\p{L}[\p{L}\p{M}]*)*$  - Very strong
+    // ^(?=.{2,50}$)\p{L}[\p{L}\p{M}]*(?:[ '.\-]\p{L}[\p{L}\p{M}]*|\.(?= ))*$ - Supports names like J. Smith
 
     public static final String USER_NAME = "^(?![._])(?!.*[._]$)(?!.*\\.\\.)(?!.*__)(?!.*\\._)(?!.*_\\.)[a-zA-Z0-9._]{3,20}$";
 
