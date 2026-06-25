@@ -12,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/super-admin")
@@ -30,7 +32,7 @@ public class SuperAdminController {
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> cancelAdminInvite(@PathVariable
             @NotBlank(message = "Invitation ID is required")
-            String inviteId) {
+                                               UUID inviteId) {
         return ResponseEntity.ok(ApiResponse.success("Invitation cancelled successfully",
                         superAdminService.cancelInvitation(inviteId)));
     }
