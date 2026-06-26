@@ -16,7 +16,6 @@ import com.shepherd.shep_blog.services.notification.MailNotificationService;
 import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
 import com.shepherd.shep_blog.utils.RoleUtil;
-import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -85,7 +84,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PaginationResponse<UserResponse> getAllEnabledUser(boolean enabled, PaginationRequest request) {
-        Pageable pageable = PageRequestFactory.create(request, ALLOWED_SORT_FIELDS);
+        Pageable pageable = request.toPageable(ALLOWED_SORT_FIELDS);
         Page<User> users = userRepository.findAllEnabledExcludingRole(enabled, RoleUtil.SUPER_ADMIN, pageable);
         log.info("==>> Fetching all user: enabled -> '{}'", enabled);
         return PaginationResponse.map(users, userMapper::mapToUserResponse);

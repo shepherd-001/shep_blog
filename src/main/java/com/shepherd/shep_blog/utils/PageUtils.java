@@ -1,4 +1,4 @@
-package com.shepherd.shep_blog.utils.pagination_utils;//package com.shepherd.shepslibrary.utils.paginationUtils;
+package com.shepherd.shep_blog.utils;//package com.shepherd.shepslibrary.utils.paginationUtils;
 //
 //import com.shepherd.shepslibrary.utils.ErrorMessage;
 //import org.springframework.data.domain.PageRequest;

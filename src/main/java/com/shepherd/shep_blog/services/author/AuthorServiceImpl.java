@@ -26,7 +26,6 @@ import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.user.UserService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
 import com.shepherd.shep_blog.utils.AppUtils;
-import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -116,10 +115,10 @@ public class AuthorServiceImpl implements AuthorService {
     @Cacheable(
             value = AUTHOR_CACHE_NAME,
             key = "#request.toCacheKey('authors')",
-            unless = "#result == null || #result.items.isEmpty() || #request.resolvedPageNumber() > 5"
+            unless = "#result == null || #result.items.isEmpty() || #request.page() > 5"
     )
     public PaginationResponse<AuthorResponse> getAllAuthor(PaginationRequest request) {
-        Pageable pageable = PageRequestFactory.create(request, ALLOWED_SORT_FIELDS);
+        Pageable pageable = request.toPageable(ALLOWED_SORT_FIELDS);
         Page<Author> authors = authorRepository.findAll(pageable);
         log.info("==>> Fetching all authors");
         return PaginationResponse.map(authors, this::buildAuthorResponse);

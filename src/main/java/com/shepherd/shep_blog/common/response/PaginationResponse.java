@@ -45,17 +45,6 @@ public record PaginationResponse<T>(
 
 
     public static <T> PaginationResponse<T> map(Page<T> page) {
-        return new PaginationResponse<>(
-                page.getContent(),
-                page.getNumber() + 1, // 1 based page number
-                page.getSize(),
-                page.getNumberOfElements(),
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.hasNext(),
-                page.hasPrevious(),
-                page.isFirst(),
-                page.isLast()
-        );
+        return of(page, page.getContent());
     }
 }

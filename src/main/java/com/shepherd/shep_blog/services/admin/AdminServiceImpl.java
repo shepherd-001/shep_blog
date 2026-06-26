@@ -1,11 +1,13 @@
 package com.shepherd.shep_blog.services.admin;
 
+import com.shepherd.shep_blog.common.exceptions.ResourceNotFoundException;
+import com.shepherd.shep_blog.common.exceptions.UnauthorizedException;
+import com.shepherd.shep_blog.common.response.PaginationResponse;
 import com.shepherd.shep_blog.data.dto.request.AcceptInviteRequest;
 import com.shepherd.shep_blog.data.dto.request.DeclineInviteRequest;
 import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.response.AdminResponse;
 import com.shepherd.shep_blog.data.dto.response.InvitationResponse;
-import com.shepherd.shep_blog.common.response.PaginationResponse;
 import com.shepherd.shep_blog.data.model.Admin;
 import com.shepherd.shep_blog.data.model.Invitation;
 import com.shepherd.shep_blog.data.model.TokenEntity;
@@ -14,13 +16,10 @@ import com.shepherd.shep_blog.data.model.enums.InvitationStatus;
 import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.repository.AdminRepository;
 import com.shepherd.shep_blog.data.repository.InvitationRepository;
-import com.shepherd.shep_blog.common.exceptions.ResourceNotFoundException;
-import com.shepherd.shep_blog.common.exceptions.UnauthorizedException;
 import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.user.UserService;
 import com.shepherd.shep_blog.utils.RoleUtil;
-import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -93,7 +92,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public PaginationResponse<AdminResponse> getAllActiveAdmins(PaginationRequest request) {
-        Pageable pageable = PageRequestFactory.create(request, ALLOWED_FIELDS);
+        Pageable pageable = request.toPageable(ALLOWED_FIELDS);
         Page<Admin> admins = adminRepository.findAllActiveAdmins(pageable);
         log.info("==>> Fetching all admins");
         return PaginationResponse.map(admins, this::buildAdminResponse);
