@@ -1,4 +1,4 @@
-package com.shepherd.shep_blog.exceptions;
+package com.shepherd.shep_blog.common.exceptions;
 
 public class UnauthorizedException extends ShepBlogException {
     public UnauthorizedException(String message) {

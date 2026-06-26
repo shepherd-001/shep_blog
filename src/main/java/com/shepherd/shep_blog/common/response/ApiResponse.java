@@ -1,4 +1,4 @@
-package com.shepherd.shep_blog.data.dto.response;
+package com.shepherd.shep_blog.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.servlet.http.HttpServletRequest;

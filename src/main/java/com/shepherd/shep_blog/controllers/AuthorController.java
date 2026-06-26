@@ -4,7 +4,7 @@ import com.shepherd.shep_blog.data.dto.request.CreateTeamMemberRequest;
 import com.shepherd.shep_blog.data.dto.request.InviteTeamMemberRequest;
 import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterAuthorRequest;
-import com.shepherd.shep_blog.data.dto.response.ApiResponse;
+import com.shepherd.shep_blog.common.response.ApiResponse;
 import com.shepherd.shep_blog.services.author.AuthorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

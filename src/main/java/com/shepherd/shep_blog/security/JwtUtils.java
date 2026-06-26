@@ -2,7 +2,7 @@ package com.shepherd.shep_blog.security;
 
 import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.model.UserRole;
-import com.shepherd.shep_blog.exceptions.InvalidJwtException;
+import com.shepherd.shep_blog.common.exceptions.InvalidJwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;

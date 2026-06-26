@@ -1,4 +1,4 @@
-package com.shepherd.shep_blog.exceptions;
+package com.shepherd.shep_blog.common.exceptions;
 
 public class ShepBlogException extends RuntimeException {
     public ShepBlogException(String message) {

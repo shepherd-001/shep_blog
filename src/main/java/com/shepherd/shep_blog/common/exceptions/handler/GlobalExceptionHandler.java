@@ -1,6 +1,7 @@
-package com.shepherd.shep_blog.exceptions.handler;
+package com.shepherd.shep_blog.common.exceptions.handler;
 
-import com.shepherd.shep_blog.data.dto.response.ApiResponse;
+import com.shepherd.shep_blog.common.response.ApiResponse;
+import com.shepherd.shep_blog.common.exceptions.*;
 import com.shepherd.shep_blog.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;

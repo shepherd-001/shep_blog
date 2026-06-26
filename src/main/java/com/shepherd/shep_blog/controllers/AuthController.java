@@ -1,7 +1,7 @@
 package com.shepherd.shep_blog.controllers;
 
 import com.shepherd.shep_blog.data.dto.request.*;
-import com.shepherd.shep_blog.data.dto.response.ApiResponse;
+import com.shepherd.shep_blog.common.response.ApiResponse;
 import com.shepherd.shep_blog.security.LogoutService;
 import com.shepherd.shep_blog.services.auth.AuthService;
 import com.shepherd.shep_blog.utils.RegexPattern;

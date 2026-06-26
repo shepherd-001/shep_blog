@@ -3,7 +3,7 @@ package com.shepherd.shep_blog.controllers;
 import com.shepherd.shep_blog.data.dto.request.AcceptInviteRequest;
 import com.shepherd.shep_blog.data.dto.request.DeclineInviteRequest;
 import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
-import com.shepherd.shep_blog.data.dto.response.ApiResponse;
+import com.shepherd.shep_blog.common.response.ApiResponse;
 import com.shepherd.shep_blog.services.admin.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

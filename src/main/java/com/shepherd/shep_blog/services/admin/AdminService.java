@@ -5,7 +5,7 @@ import com.shepherd.shep_blog.data.dto.request.DeclineInviteRequest;
 import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.response.AdminResponse;
 import com.shepherd.shep_blog.data.dto.response.InvitationResponse;
-import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
+import com.shepherd.shep_blog.common.response.PaginationResponse;
 
 public interface AdminService {
     InvitationResponse declineInvitation(DeclineInviteRequest declineInviteRequest);

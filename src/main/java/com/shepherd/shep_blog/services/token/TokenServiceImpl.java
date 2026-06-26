@@ -2,7 +2,7 @@ package com.shepherd.shep_blog.services.token;
 
 import com.shepherd.shep_blog.data.model.TokenEntity;
 import com.shepherd.shep_blog.data.model.enums.TokenType;
-import com.shepherd.shep_blog.exceptions.ShepTokenException;
+import com.shepherd.shep_blog.common.exceptions.ShepTokenException;
 import com.shepherd.shep_blog.utils.AppUtils;
 import com.shepherd.shep_blog.utils.HashUtils;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.shepherd.shep_blog.security;
 
 import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.model.UserRole;
-import com.shepherd.shep_blog.exceptions.UserNotVerifiedException;
+import com.shepherd.shep_blog.common.exceptions.UserNotVerifiedException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

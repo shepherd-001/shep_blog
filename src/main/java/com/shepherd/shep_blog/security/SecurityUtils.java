@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.security;
 
-import com.shepherd.shep_blog.exceptions.UnauthorizedException;
+import com.shepherd.shep_blog.common.exceptions.UnauthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

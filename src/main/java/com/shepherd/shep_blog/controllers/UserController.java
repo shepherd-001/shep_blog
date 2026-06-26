@@ -2,7 +2,7 @@ package com.shepherd.shep_blog.controllers;
 
 import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterReaderRequest;
-import com.shepherd.shep_blog.data.dto.response.ApiResponse;
+import com.shepherd.shep_blog.common.response.ApiResponse;
 import com.shepherd.shep_blog.services.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

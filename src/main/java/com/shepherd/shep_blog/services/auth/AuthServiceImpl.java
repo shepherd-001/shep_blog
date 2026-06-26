@@ -10,7 +10,7 @@ import com.shepherd.shep_blog.data.dto.response.VerifyEmailResponse;
 import com.shepherd.shep_blog.data.model.TokenEntity;
 import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.model.enums.TokenType;
-import com.shepherd.shep_blog.exceptions.UserAlreadyEnabledException;
+import com.shepherd.shep_blog.common.exceptions.UserAlreadyEnabledException;
 import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.security.AuthenticatedUser;
 import com.shepherd.shep_blog.security.JwtUtils;

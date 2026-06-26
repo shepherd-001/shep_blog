@@ -2,8 +2,8 @@ package com.shepherd.shep_blog.services.userRoleAndPermission;
 
 import com.shepherd.shep_blog.data.model.Permission;
 import com.shepherd.shep_blog.data.repository.PermissionRepository;
-import com.shepherd.shep_blog.exceptions.AlreadyExistsException;
-import com.shepherd.shep_blog.exceptions.ResourceNotFoundException;
+import com.shepherd.shep_blog.common.exceptions.AlreadyExistsException;
+import com.shepherd.shep_blog.common.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;

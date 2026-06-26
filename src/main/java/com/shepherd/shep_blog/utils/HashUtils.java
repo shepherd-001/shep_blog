@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.utils;
 
-import com.shepherd.shep_blog.exceptions.ShepBlogException;
+import com.shepherd.shep_blog.common.exceptions.ShepBlogException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
