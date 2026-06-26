@@ -2,13 +2,12 @@ package com.shepherd.shep_blog.common.response;
 
 import org.springframework.data.domain.Page;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
 
 public record PaginationResponse<T>(
-        List<T> content,
+        List<T> items,
         int page,
         int size,
         int numberOfElements,
@@ -19,13 +18,13 @@ public record PaginationResponse<T>(
         boolean first,
         boolean last
 ) {
-    public static <S, T> PaginationResponse<T> map(Page<S> page, Function<S, T> mapper) {
-        List<T> content = page.isEmpty()
-                ? Collections.emptyList()
-                : page.stream().map(mapper).toList();
+    private static <T> PaginationResponse<T> of(
+            Page<?> page,
+            List<T> items
+    ) {
         return new PaginationResponse<>(
-                content,
-                page.getNumber() + 1, // 1 based page number
+                items,
+                page.getNumber() + 1,
                 page.getSize(),
                 page.getNumberOfElements(),
                 page.getTotalElements(),
@@ -36,6 +35,14 @@ public record PaginationResponse<T>(
                 page.isLast()
         );
     }
+
+    public static <S, T> PaginationResponse<T> map(Page<S> page, Function<S, T> mapper) {
+        return of(
+                page,
+                page.stream().map(mapper).toList()
+        );
+    }
+
 
     public static <T> PaginationResponse<T> map(Page<T> page) {
         return new PaginationResponse<>(

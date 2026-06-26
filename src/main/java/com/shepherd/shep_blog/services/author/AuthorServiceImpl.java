@@ -116,7 +116,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Cacheable(
             value = AUTHOR_CACHE_NAME,
             key = "#request.toCacheKey('authors')",
-            unless = "#result == null || #result.content.isEmpty() || #request.resolvedPageNumber() > 5"
+            unless = "#result == null || #result.items.isEmpty() || #request.resolvedPageNumber() > 5"
     )
     public PaginationResponse<AuthorResponse> getAllAuthor(PaginationRequest request) {
         Pageable pageable = PageRequestFactory.create(request, ALLOWED_SORT_FIELDS);
