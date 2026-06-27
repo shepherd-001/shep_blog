@@ -1,11 +1,14 @@
 package com.shepherd.shep_blog.common.exceptions;
 
-public class ShepBlogException extends RuntimeException {
+import com.shepherd.shep_blog.common.ErrorCode;
+import org.springframework.http.HttpStatus;
+
+public class ShepBlogException extends BaseApiException {
     public ShepBlogException(String message) {
-        super(message);
+        super(message, ErrorCode.SHEP_BLOG_ERROR, HttpStatus.BAD_REQUEST);
     }
 
     public ShepBlogException(String message, Throwable cause) {
-        super(message, cause);
+        super(message, ErrorCode.SHEP_BLOG_ERROR, HttpStatus.BAD_REQUEST, cause);
     }
 }

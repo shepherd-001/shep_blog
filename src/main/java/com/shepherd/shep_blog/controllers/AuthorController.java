@@ -2,7 +2,7 @@ package com.shepherd.shep_blog.controllers;
 
 import com.shepherd.shep_blog.data.dto.request.CreateTeamMemberRequest;
 import com.shepherd.shep_blog.data.dto.request.InviteTeamMemberRequest;
-import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
+import com.shepherd.shep_blog.common.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterAuthorRequest;
 import com.shepherd.shep_blog.common.response.ApiResponse;
 import com.shepherd.shep_blog.services.author.AuthorService;
@@ -24,7 +24,7 @@ public class AuthorController {
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<?>> registerAuthor(@Valid @RequestBody RegisterAuthorRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.success("User registered successfully", authorService.registerAuthor(request)));
+                ApiResponse.of("User registered successfully", authorService.registerAuthor(request)));
     }
 
     @GetMapping("/all")
@@ -35,27 +35,27 @@ public class AuthorController {
                                                         @RequestParam(required = false) String sortDirection){
         PaginationRequest paginationRequest = new PaginationRequest(page, size, sortBy, sortDirection);
         return ResponseEntity.ok(ApiResponse
-                .success(authorService.getAllAuthor(paginationRequest)));
+                .of(authorService.getAllAuthor(paginationRequest)));
     }
 
     @PostMapping("/team-member/invite")
     @PreAuthorize("hasRole('SUPER_AUTHOR')")
     public ResponseEntity<ApiResponse<?>> createTeamMember(@Valid @RequestBody InviteTeamMemberRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse
-                .success("Team member invited successfully", authorService.inviteTeamMember(request)));
+                .of("Team member invited successfully", authorService.inviteTeamMember(request)));
     }
 
     @PostMapping("/team-member/create")
     @PreAuthorize("hasRole('SUPER_AUTHOR')")
     public ResponseEntity<ApiResponse<?>> createTeamMember(@Valid @RequestBody CreateTeamMemberRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse
-                .success("Team member created successfully", authorService.createTeamMember(request)));
+                .of("Team member created successfully", authorService.createTeamMember(request)));
     }
 
     @PutMapping("/team-member/activate/{authorId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<?>> activateTeamMember(@PathVariable UUID authorId) {
-        return ResponseEntity.ok(ApiResponse.success("Team member activated successfully",
+        return ResponseEntity.ok(ApiResponse.of("Team member activated successfully",
                 authorService.activateTeamMember(authorId)));
     }
 }

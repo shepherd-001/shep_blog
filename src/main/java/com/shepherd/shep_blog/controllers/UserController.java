@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.controllers;
 
-import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
+import com.shepherd.shep_blog.common.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterReaderRequest;
 import com.shepherd.shep_blog.common.response.ApiResponse;
 import com.shepherd.shep_blog.services.user.UserService;
@@ -20,7 +20,7 @@ public class UserController {
     @PostMapping("/signup/reader")
     public ResponseEntity<ApiResponse<?>> registerReader(@Valid @RequestBody RegisterReaderRequest registerReaderRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.success("User registered successfully", userService.registerReader(registerReaderRequest)));
+                ApiResponse.of("User registered successfully", userService.registerReader(registerReaderRequest)));
     }
 
     @GetMapping("/all")
@@ -32,6 +32,6 @@ public class UserController {
                                                              @RequestParam(defaultValue = "true") boolean enabled){
         PaginationRequest paginationRequest = new PaginationRequest(page, size, sortBy, sortDirection);
         return ResponseEntity.ok(ApiResponse
-                .success(userService.getAllEnabledUser(enabled, paginationRequest)));
+                .of(userService.getAllEnabledUser(enabled, paginationRequest)));
     }
 }

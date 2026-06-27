@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.data.model;
 
-import com.shepherd.shep_blog.data.model.baseEntities.BaseEntity;
+import com.shepherd.shep_blog.common.baseEntities.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;

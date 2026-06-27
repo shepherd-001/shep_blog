@@ -23,7 +23,7 @@ public class SuperAdminController {
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> inviteAdmin(@RequestBody @Valid InviteAdminRequest inviteAdminRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse
-                .success("Admins invited successfully", superAdminService.inviteAdmin(inviteAdminRequest)));
+                .of("Admins invited successfully", superAdminService.inviteAdmin(inviteAdminRequest)));
     }
 
     @PutMapping("/invite/cancel/{inviteId}")
@@ -31,7 +31,7 @@ public class SuperAdminController {
     public ResponseEntity<?> cancelAdminInvite(@PathVariable
             @NotBlank(message = "Invitation ID is required")
             String inviteId) {
-        return ResponseEntity.ok(ApiResponse.success("Invitation cancelled successfully",
+        return ResponseEntity.ok(ApiResponse.of("Invitation cancelled successfully",
                         superAdminService.cancelInvitation(inviteId)));
     }
 }

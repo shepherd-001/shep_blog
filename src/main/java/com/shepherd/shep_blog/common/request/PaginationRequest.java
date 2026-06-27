@@ -1,4 +1,4 @@
-package com.shepherd.shep_blog.data.dto.request;
+package com.shepherd.shep_blog.common.request;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;

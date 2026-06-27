@@ -1,7 +1,10 @@
 package com.shepherd.shep_blog.common.exceptions;
 
-public class UserAlreadyEnabledException extends ShepBlogException {
+import com.shepherd.shep_blog.common.ErrorCode;
+import org.springframework.http.HttpStatus;
+
+public class UserAlreadyEnabledException extends BaseApiException {
     public UserAlreadyEnabledException(String message) {
-        super(message);
+        super(message, ErrorCode.CONFLICT, HttpStatus.CONFLICT);
     }
 }

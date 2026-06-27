@@ -43,7 +43,6 @@ public record PaginationResponse<T>(
         );
     }
 
-
     public static <T> PaginationResponse<T> map(Page<T> page) {
         return of(page, page.getContent());
     }

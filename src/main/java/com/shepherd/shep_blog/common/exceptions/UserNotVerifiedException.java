@@ -1,7 +1,10 @@
 package com.shepherd.shep_blog.common.exceptions;
 
-public class UserNotVerifiedException extends ShepBlogException {
+import com.shepherd.shep_blog.common.ErrorCode;
+import org.springframework.http.HttpStatus;
+
+public class UserNotVerifiedException extends BaseApiException {
     public UserNotVerifiedException(String message) {
-        super(message);
+        super(message, ErrorCode.VALIDATION_ERROR, HttpStatus.UNAUTHORIZED);
     }
 }

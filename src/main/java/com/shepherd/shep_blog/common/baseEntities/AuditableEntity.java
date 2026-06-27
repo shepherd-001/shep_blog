@@ -1,4 +1,4 @@
-package com.shepherd.shep_blog.data.model.baseEntities;
+package com.shepherd.shep_blog.common.baseEntities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

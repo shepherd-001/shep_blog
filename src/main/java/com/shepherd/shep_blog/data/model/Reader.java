@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.data.model;
 
-import com.shepherd.shep_blog.data.model.baseEntities.AuditableEntity;
+import com.shepherd.shep_blog.common.baseEntities.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

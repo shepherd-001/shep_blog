@@ -1,7 +1,10 @@
 package com.shepherd.shep_blog.common.exceptions;
 
-public class ResourceNotFoundException extends ShepBlogException {
+import com.shepherd.shep_blog.common.ErrorCode;
+import org.springframework.http.HttpStatus;
+
+public class ResourceNotFoundException extends BaseApiException {
     public ResourceNotFoundException(String message) {
-        super(message);
+        super(message, ErrorCode.RESOURCE_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 }
