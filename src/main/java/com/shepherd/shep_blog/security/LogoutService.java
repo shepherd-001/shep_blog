@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.security;
 
-import com.shepherd.shep_blog.exceptions.InvalidJwtException;
+import com.shepherd.shep_blog.common.exceptions.InvalidJwtException;
 import com.shepherd.shep_blog.services.JwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

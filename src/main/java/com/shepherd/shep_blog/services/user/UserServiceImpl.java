@@ -1,8 +1,8 @@
 package com.shepherd.shep_blog.services.user;
 
-import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
+import com.shepherd.shep_blog.common.request.PaginationRequest;
 import com.shepherd.shep_blog.data.dto.request.RegisterReaderRequest;
-import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
+import com.shepherd.shep_blog.common.response.PaginationResponse;
 import com.shepherd.shep_blog.data.dto.response.RegisterUserResponse;
 import com.shepherd.shep_blog.data.dto.response.UserResponse;
 import com.shepherd.shep_blog.data.model.Reader;
@@ -10,14 +10,12 @@ import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.repository.ReaderRepository;
 import com.shepherd.shep_blog.data.repository.UserRepository;
-import com.shepherd.shep_blog.exceptions.AlreadyExistsException;
+import com.shepherd.shep_blog.common.exceptions.AlreadyExistsException;
 import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.services.notification.MailNotificationService;
 import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
 import com.shepherd.shep_blog.utils.RoleUtil;
-import com.shepherd.shep_blog.utils.pagination_utils.PageMapper;
-import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -72,24 +70,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void checkIfUserEmailExists(String email) {
-        if(userRepository.existsByEmailIgnoreCase(email.trim())) {
+        if (userRepository.existsByEmailIgnoreCase(email.trim())) {
             throw new AlreadyExistsException(USER_EMAIL_ALREADY_EXISTS);
         }
     }
 
     @Override
     public void checkIfUserNameExists(String username) {
-        if(userRepository.existsByUsernameIgnoreCase(username.trim())) {
+        if (userRepository.existsByUsernameIgnoreCase(username.trim())) {
             throw new AlreadyExistsException(USER_NAME_ALREADY_EXISTS);
         }
     }
 
     @Override
     public PaginationResponse<UserResponse> getAllEnabledUser(boolean enabled, PaginationRequest request) {
-        Pageable pageable = PageRequestFactory.create(request, ALLOWED_SORT_FIELDS);
+        Pageable pageable = request.toPageable(ALLOWED_SORT_FIELDS);
         Page<User> users = userRepository.findAllEnabledExcludingRole(enabled, RoleUtil.SUPER_ADMIN, pageable);
         log.info("==>> Fetching all user: enabled -> '{}'", enabled);
-        return PageMapper.map(users, userMapper::mapToUserResponse);
+        return PaginationResponse.map(users, userMapper::mapToUserResponse);
     }
 
     @Override
@@ -104,7 +102,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getByEmail(String email) {
-        return userRepository.findByEmailIgnoreCase(email.trim()).orElseThrow(()-> {
+        return userRepository.findByEmailIgnoreCase(email.trim()).orElseThrow(() -> {
             log.warn("User {} not found", email);
             return new UsernameNotFoundException(USER_NOT_FOUND);
         });

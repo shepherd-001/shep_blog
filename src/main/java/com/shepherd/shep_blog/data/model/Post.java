@@ -1,12 +1,12 @@
 package com.shepherd.shep_blog.data.model;
 
+import com.shepherd.shep_blog.common.baseEntities.AuditableEntity;
 import com.shepherd.shep_blog.data.model.enums.PostStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(indexes = {
@@ -19,10 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Post extends BaseEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Post extends AuditableEntity {
     private String title;
     @Column(unique = true, length = 400)
     private String slug;

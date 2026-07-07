@@ -10,9 +10,9 @@ import com.shepherd.shep_blog.data.model.enums.InvitationStatus;
 import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.repository.InvitationRepository;
 import com.shepherd.shep_blog.data.repository.UserRepository;
-import com.shepherd.shep_blog.exceptions.AlreadyExistsException;
-import com.shepherd.shep_blog.exceptions.ResourceNotFoundException;
-import com.shepherd.shep_blog.exceptions.ShepBlogException;
+import com.shepherd.shep_blog.common.exceptions.AlreadyExistsException;
+import com.shepherd.shep_blog.common.exceptions.ResourceNotFoundException;
+import com.shepherd.shep_blog.common.exceptions.ShepBlogException;
 import com.shepherd.shep_blog.services.notification.MailNotificationService;
 import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
@@ -118,7 +118,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         if(!invitation.getStatus().equals(InvitationStatus.PENDING)){
             throw new ShepBlogException("Invitation cannot be cancelled");
         }
-
+        
         invitationRepository.delete(invitation);
 
         log.info("==>> Invitation '{}' cancelled successfully", inviteId);

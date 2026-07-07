@@ -1,9 +1,8 @@
 package com.shepherd.shep_blog.data.model;
 
+import com.shepherd.shep_blog.common.baseEntities.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.UUID;
 
 @Entity
 @Table(indexes = @Index(name = "idx_category_slug", columnList = "slug"))
@@ -12,10 +11,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @Builder
-public class Category {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Category extends BaseEntity {
     private String name;
     private String slug;
     private String description;

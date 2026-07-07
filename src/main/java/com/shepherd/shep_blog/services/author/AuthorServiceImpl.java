@@ -1,17 +1,23 @@
 package com.shepherd.shep_blog.services.author;
 
-import com.shepherd.shep_blog.data.dto.request.*;
+import com.shepherd.shep_blog.data.dto.request.CreateTeamMemberRequest;
+import com.shepherd.shep_blog.data.dto.request.InviteTeamMemberRequest;
+import com.shepherd.shep_blog.common.request.PaginationRequest;
+import com.shepherd.shep_blog.data.dto.request.RegisterAuthorRequest;
 import com.shepherd.shep_blog.data.dto.response.AuthorResponse;
-import com.shepherd.shep_blog.data.dto.response.PaginationResponse;
+import com.shepherd.shep_blog.common.response.PaginationResponse;
 import com.shepherd.shep_blog.data.dto.response.TeamMemberResponse;
-import com.shepherd.shep_blog.data.model.*;
+import com.shepherd.shep_blog.data.model.Author;
+import com.shepherd.shep_blog.data.model.TeamMember;
+import com.shepherd.shep_blog.data.model.TeamMemberStatus;
+import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.model.enums.TeamMemberRole;
 import com.shepherd.shep_blog.data.model.enums.TokenType;
 import com.shepherd.shep_blog.data.repository.AuthorRepository;
 import com.shepherd.shep_blog.data.repository.TeamMemberRepository;
-import com.shepherd.shep_blog.exceptions.AlreadyExistsException;
-import com.shepherd.shep_blog.exceptions.ResourceNotFoundException;
-import com.shepherd.shep_blog.exceptions.UnauthorizedException;
+import com.shepherd.shep_blog.common.exceptions.AlreadyExistsException;
+import com.shepherd.shep_blog.common.exceptions.ResourceNotFoundException;
+import com.shepherd.shep_blog.common.exceptions.UnauthorizedException;
 import com.shepherd.shep_blog.mapper.AuthorMapper;
 import com.shepherd.shep_blog.mapper.UserMapper;
 import com.shepherd.shep_blog.security.SecurityUtils;
@@ -20,8 +26,6 @@ import com.shepherd.shep_blog.services.token.TokenService;
 import com.shepherd.shep_blog.services.user.UserService;
 import com.shepherd.shep_blog.services.userRoleAndPermission.RoleService;
 import com.shepherd.shep_blog.utils.AppUtils;
-import com.shepherd.shep_blog.utils.pagination_utils.PageMapper;
-import com.shepherd.shep_blog.utils.pagination_utils.PageRequestFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,14 +40,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.shepherd.shep_blog.utils.ErrorMessage.*;
+import static com.shepherd.shep_blog.utils.ErrorMessage.INVALID_WEBSITE_ADDRESS;
+import static com.shepherd.shep_blog.utils.ErrorMessage.TEAM_MEMBER_NOT_FOUND;
 import static com.shepherd.shep_blog.utils.RoleUtil.SUPER_AUTHOR;
 
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthorServiceImpl implements AuthorService{
+public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
     private final UserService userService;
     private final RoleService roleService;
@@ -51,7 +56,7 @@ public class AuthorServiceImpl implements AuthorService{
     private final UserMapper userMapper;
     private final AuthorMapper authorMapper;
     private final TokenService tokenService;
-    private final TeamMemberRepository  teamMemberRepository;
+    private final TeamMemberRepository teamMemberRepository;
     private final MailNotificationService notificationService;
     private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("organizationPhoneNumber", "createdAt");
     private static final String AUTHOR_CACHE_NAME = "authorCache";
@@ -90,7 +95,7 @@ public class AuthorServiceImpl implements AuthorService{
     }
 
     private void checkIfWebsiteAddressIsValid(String websiteAddress) {
-        if(!AppUtils.isValidUri(websiteAddress))
+        if (!AppUtils.isValidUri(websiteAddress))
             throw new IllegalArgumentException(INVALID_WEBSITE_ADDRESS);
     }
 
@@ -110,13 +115,13 @@ public class AuthorServiceImpl implements AuthorService{
     @Cacheable(
             value = AUTHOR_CACHE_NAME,
             key = "#request.toCacheKey('authors')",
-            unless = "#result == null || #result.content.isEmpty() || #request.resolvedPageNumber() > 5"
+            unless = "#result == null || #result.items.isEmpty() || #request.page() > 5"
     )
     public PaginationResponse<AuthorResponse> getAllAuthor(PaginationRequest request) {
-        Pageable pageable = PageRequestFactory.create(request, ALLOWED_SORT_FIELDS);
+        Pageable pageable = request.toPageable(ALLOWED_SORT_FIELDS);
         Page<Author> authors = authorRepository.findAll(pageable);
         log.info("==>> Fetching all authors");
-        return PageMapper.map(authors, this::buildAuthorResponse);
+        return PaginationResponse.map(authors, this::buildAuthorResponse);
     }
 
     @Transactional
@@ -131,7 +136,7 @@ public class AuthorServiceImpl implements AuthorService{
         validateTeamMemberRole(author.getId(), request.getRole());
 
         User invitedUser = userService.getByEmailIgnoreCase(request.getEmail()).orElseThrow(
-                ()-> new ResourceNotFoundException("User must exist before being invited"));
+                () -> new ResourceNotFoundException("User must exist before being invited"));
         invitedUser = userService.saveUser(invitedUser);
 
         TeamMember teamMember = TeamMember.builder()
@@ -187,11 +192,11 @@ public class AuthorServiceImpl implements AuthorService{
 
     private Author getAuthorById(UUID authorId) {
         return authorRepository.findById(authorId).orElseThrow(
-                ()-> new ResourceNotFoundException("Author not found"));
+                () -> new ResourceNotFoundException("Author not found"));
     }
 
     private void authorizeInvite(UUID authorId, UUID userId) {
-        if(!teamMemberRepository.existsByAuthorIdAndUserIdAndStatus(authorId, userId, TeamMemberStatus.ACTIVE))
+        if (!teamMemberRepository.existsByAuthorIdAndUserIdAndStatus(authorId, userId, TeamMemberStatus.ACTIVE))
             throw new UnauthorizedException("User is not allowed to invite members to this author");
     }
 
@@ -205,7 +210,7 @@ public class AuthorServiceImpl implements AuthorService{
     }
 
     private void checkIfTeamMemberEmailExists(UUID authorId, String email) {
-        if(teamMemberRepository.existsByAuthorIdAndUserEmailIgnoreCase(authorId, email.trim())){
+        if (teamMemberRepository.existsByAuthorIdAndUserEmailIgnoreCase(authorId, email.trim())) {
             throw new AlreadyExistsException("The user is already a member of this author team");
         }
     }
@@ -229,18 +234,18 @@ public class AuthorServiceImpl implements AuthorService{
 
     private TeamMember getTeamMember(UUID authorId, UUID userId) {
         return teamMemberRepository.findByAuthor_IdAndUser_Id(authorId, userId).orElseThrow(
-                ()-> new ResourceNotFoundException(TEAM_MEMBER_NOT_FOUND));
+                () -> new ResourceNotFoundException(TEAM_MEMBER_NOT_FOUND));
     }
 
     private void activate(TeamMember teamMember) {
         TeamMemberStatus status = teamMember.getStatus();
-        if(status == TeamMemberStatus.ACTIVE){
+        if (status == TeamMemberStatus.ACTIVE) {
             return;
         }
-        if(status != TeamMemberStatus.INVITED) {
+        if (status != TeamMemberStatus.INVITED) {
             throw new IllegalStateException("Invalid activation status");
         }
-       teamMember.setStatus(TeamMemberStatus.ACTIVE);
+        teamMember.setStatus(TeamMemberStatus.ACTIVE);
     }
 
 //    private void validateTeamMemberStatus(TeamMember teamMember){

@@ -1,11 +1,11 @@
 package com.shepherd.shep_blog.data.model;
 
+import com.shepherd.shep_blog.common.baseEntities.AuditableEntity;
 import com.shepherd.shep_blog.data.model.enums.ModerationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(indexes = {
@@ -17,10 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class Comment extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Comment extends AuditableEntity {
     @Column(columnDefinition = "text")
     private String content;
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,11 +1,11 @@
 package com.shepherd.shep_blog.data.model;
 
+import com.shepherd.shep_blog.common.baseEntities.BaseEntity;
 import com.shepherd.shep_blog.data.model.enums.MediaType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(indexes = @Index(name = "idx_media_post", columnList = "post_id"))
@@ -14,11 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Media {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
+public class Media extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;

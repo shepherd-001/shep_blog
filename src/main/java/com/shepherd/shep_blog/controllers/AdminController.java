@@ -2,8 +2,8 @@ package com.shepherd.shep_blog.controllers;
 
 import com.shepherd.shep_blog.data.dto.request.AcceptInviteRequest;
 import com.shepherd.shep_blog.data.dto.request.DeclineInviteRequest;
-import com.shepherd.shep_blog.data.dto.request.PaginationRequest;
-import com.shepherd.shep_blog.data.dto.response.ApiResponse;
+import com.shepherd.shep_blog.common.request.PaginationRequest;
+import com.shepherd.shep_blog.common.response.ApiResponse;
 import com.shepherd.shep_blog.services.admin.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,18 +23,22 @@ public class AdminController {
     @PostMapping("/invite/accept")
     public ResponseEntity<?> acceptInvite(@RequestBody @Valid AcceptInviteRequest acceptInviteRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse
-                .success("Invitation accepted successfully", adminService.acceptInvitation(acceptInviteRequest)));
+                .of("Invitation accepted successfully", adminService.acceptInvitation(acceptInviteRequest)));
     }
 
     @PostMapping("/invite/decline")
     public ResponseEntity<?> declineInvite(@RequestBody @Valid DeclineInviteRequest declineInviteRequest) {
         return ResponseEntity.ok(ApiResponse
-                .success("Invitation declined successfully", adminService.declineInvitation(declineInviteRequest)));
+                .of("Invitation declined successfully", adminService.declineInvitation(declineInviteRequest)));
     }
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<?> getAllActiveAdmins(@RequestBody PaginationRequest paginationRequest) {
-        return ResponseEntity.ok(ApiResponse.success(adminService.getAllActiveAdmins(paginationRequest)));
+    public ResponseEntity<?> getAllActiveAdmins(@RequestParam(required = false, defaultValue = "1") int page,
+                                                @RequestParam(required = false, defaultValue = "10") int size,
+                                                @RequestParam(required = false) String sortBy,
+                                                @RequestParam(required = false) String sortDirection){
+        PaginationRequest paginationRequest = new PaginationRequest(page, size, sortBy, sortDirection);
+        return ResponseEntity.ok(ApiResponse.of(adminService.getAllActiveAdmins(paginationRequest)));
     }
 }

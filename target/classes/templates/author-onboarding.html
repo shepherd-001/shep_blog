@@ -3,155 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Confirmation</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f9f4;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-        }
-        .email-container {
-            width: 100%;
-            background-color: #f4f9f4;
-            padding: 20px;
-        }
-        .email-content {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-        }
-        .email-header {
-            text-align: center;
-            color: #333;
-        }
-        .email-header h1 {
-            margin: 0;
-            font-size: 6vw;
-            color: #4CAF50;
-        }
-        .greeting {
-            font-size: 4vw;
-            color: #333;
-            margin-top: 10px;
-        }
-        .intro-text {
-            font-size: 4vw;
-            color: #555;
-            margin-top: 20px;
-            line-height: 1.6;
-        }
-        .confirmation-link-container {
-            background-color: #ffffff;
-            padding: 10px;
-            text-align: center;
-            margin-top: 20px;
-            border-radius: 6px;
-            font-size: 5vw;
-            font-weight: bold;
-            color: #4CAF50;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 3.5vw;
-            color: #777;
-        }
-        .footer a {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
-        .btn {
-            display: inline-block;
-            width: auto;
-            padding: 15px 30px;
-            background-color: #4CAF50;
-            color: #ffffff;
-            font-size: 4.5vw;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 6px;
-            margin-top: 20px;
-        }
-        .btn:hover {
-            background-color: #45a049;
-        }
-        @media screen and (min-width: 600px) {
-            .email-header h1 {
-                font-size: 28px;
-            }
-            .greeting {
-                font-size: 18px;
-            }
-            .intro-text {
-                font-size: 16px;
-            }
-            .confirmation-link-container {
-                font-size: 18px;
-            }
-            .footer {
-                font-size: 14px;
-            }
-            .btn {
-                font-size: 16px;
-            }
-        }
-    </style>
+    <title>Confirm Your Author Account – Sheps Blog</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
-<body>
-<div class="email-container">
-    <div class="email-content">
-        <div class="email-header">
-            <h1>Confirm Your Author Account</h1>
-            <p class="greeting">Hello <strong th:text="${displayName}">[Author]</strong>,</p>
-        </div>
 
-        <p class="intro-text">
-            Welcome to <strong>Sheps Blog</strong>—a platform where powerful stories, insightful perspectives, and unique voices come together.
-            We're thrilled to have you join our growing community of talented authors.
-        </p>
+<body style="background:#f0ede8; margin:0; padding:40px 16px; font-family:'DM Sans', Arial, sans-serif;">
 
-        <p class="intro-text">
-            Your words have the power to inspire, inform, and spark conversation. By becoming a Sheps Blog author, you're stepping into a space designed to help you create, share, and grow your reach.
-            From intuitive writing tools to a supportive audience, everything here is built to amplify your voice.
-        </p>
+<div style="max-width:580px; margin:0 auto;">
 
-        <p class="intro-text">
-            Before you can start publishing your articles and building your author profile, please confirm your email address below.
-        </p>
-
-        <p>Click the button to verify your author account:</p>
-
-        <div class="confirmation-link-container">
-            <a th:href="${confirmationLink}" class="btn">Verify Your Email</a>
-        </div>
-
-        <p class="intro-text">
-            If you did not sign up to be an author on Sheps Blog, you can safely ignore this message.
-        </p>
-
-        <div class="footer">
-            <p>
-                Need assistance? <a href="mailto:support@shepblog.com">Contact Support</a>.
-            </p>
-            <p>
-                With appreciation,<br>
-                The Sheps Blog Team
-            </p>
-
-            <p style="margin-top: 20px; color: #999; font-size: 13px;">
-                © <span th:text="${T(java.time.Year).now().value}">2025</span> Sheps Blog. All Rights Reserved.
-            </p>
+    <!-- Brand -->
+    <div style="text-align:center; margin-bottom:28px;">
+        <div style="display:inline-flex; align-items:center; gap:10px;">
+            <div style="width:36px; height:36px; background:#d4572a; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                <svg width="18" height="18" fill="#fff" viewBox="0 0 20 20">
+                    <path d="M3 4h14v2H3V4zm0 5h14v2H3V9zm0 5h8v2H3v-2z"/>
+                </svg>
+            </div>
+            <span style="font-family:'Playfair Display', serif; font-size:22px;">
+                Sheps<span style="color:#d4572a;">Blog</span>
+            </span>
         </div>
     </div>
+
+    <!-- Card -->
+    <div style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,0.08);">
+
+        <!-- Hero -->
+        <div style="background:#0f1117; padding:50px 30px; text-align:center;">
+            <div style="margin-bottom:16px; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#f4956f;">
+                Author Access
+            </div>
+
+            <h1 style="font-family:'Playfair Display', serif; font-size:30px; color:#fff; margin:0;">
+                Confirm your author profile<br>
+                <span style="background:linear-gradient(135deg,#f4956f,#c8a84b); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+                    start sharing your voice
+                </span>
+            </h1>
+        </div>
+
+        <!-- Body -->
+        <div style="padding:36px 30px;">
+
+            <p style="color:#4a4d5a; font-size:16px; line-height:1.6;">
+                Hello <strong style="color:#0f1117;" th:text="${displayName}">[Author]</strong> ✍️,<br><br>
+                Welcome to <strong>Sheps Blog</strong> — where ideas turn into impact and voices find their audience.
+            </p>
+
+            <p style="color:#4a4d5a; font-size:15px; line-height:1.6;">
+                You’re joining a growing community of creators who write to inspire, educate, and spark meaningful conversations.
+                Everything here is designed to help you publish confidently and grow your reach.
+            </p>
+
+            <!-- Divider -->
+            <div style="display:flex; align-items:center; gap:10px; margin:28px 0;">
+                <hr style="flex:1; border:none; border-top:1px solid #e2dfd9;">
+                <span style="font-size:11px; color:#9396a3; letter-spacing:1px;">What you unlock</span>
+                <hr style="flex:1; border:none; border-top:1px solid #e2dfd9;">
+            </div>
+
+            <!-- Features -->
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                <span style="background:#fde9e2; color:#b84420; padding:6px 14px; border-radius:999px; font-size:12px;">Publish articles</span>
+                <span style="background:#fde9e2; color:#b84420; padding:6px 14px; border-radius:999px; font-size:12px;">Build your audience</span>
+                <span style="background:#fde9e2; color:#b84420; padding:6px 14px; border-radius:999px; font-size:12px;">Engage readers</span>
+                <span style="background:#fde9e2; color:#b84420; padding:6px 14px; border-radius:999px; font-size:12px;">Grow your voice</span>
+            </div>
+
+            <!-- CTA -->
+            <div style="text-align:center; margin:32px 0;">
+                <a th:href="${confirmationLink}"
+                   style="display:inline-block; background:#d4572a; color:#fff; padding:16px 40px; border-radius:999px; text-decoration:none; font-weight:500;">
+                    ✦ Verify My Author Account
+                </a>
+            </div>
+
+            <!-- Supporting Text -->
+            <p style="color:#4a4d5a; font-size:14px; line-height:1.6;">
+                Once confirmed, you’ll be able to start publishing articles, building your profile, and connecting with readers around the world.
+            </p>
+
+            <!-- Safety -->
+            <div style="background:#f7f6f3; border-left:3px solid #c8a84b; padding:14px 16px; font-size:13px; color:#4a4d5a; margin-top:20px;">
+                <strong style="color:#0f1117;">Not expecting this?</strong><br>
+                If you didn’t sign up as an author, you can safely ignore this email — no action will be taken.
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align:center; margin-top:24px; font-size:12px; color:#9396a3;">
+        <div style="margin-bottom:12px;">
+            <a href="mailto:support@shepblog.com" style="margin:0 10px; color:#9396a3; text-decoration:none;">Help & Support</a>
+            <a href="#" style="margin:0 10px; color:#9396a3; text-decoration:none;">Privacy Policy</a>
+            <a href="#" style="margin:0 10px; color:#9396a3; text-decoration:none;">Unsubscribe</a>
+        </div>
+
+        <p>
+            With appreciation,<br>
+            <strong>The Sheps Blog Team</strong>
+        </p>
+
+        <p style="margin-top:8px; color:#b5b3ae;">
+            © <span th:text="${T(java.time.Year).now().value}">2025</span> Sheps Blog · All rights reserved
+        </p>
+    </div>
+
 </div>
+
 </body>
 </html>
