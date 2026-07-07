@@ -19,6 +19,9 @@ public final class ValidationMessage {
     public static final String INVALID_PHONE_NUMBER = "Phone number is invalid";
     public static final String INVALID_GENDER = "Invalid gender. Allowed values: MALE, FEMALE";
 
+    public static final String FIRST_NAME_TOO_LONG = "First name is too long";
+    public static final String LAST_NAME_TOO_LONG = "Last name is too long";
+
     public static final String NULL_GENDER = "Gender is required";
 
     private ValidationMessage() {

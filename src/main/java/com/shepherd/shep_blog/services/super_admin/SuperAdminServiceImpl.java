@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static com.shepherd.shep_blog.utils.ErrorMessage.INVITATION_NOT_FOUND;
 import static com.shepherd.shep_blog.utils.ErrorMessage.USER_EMAIL_ALREADY_EXISTS;
@@ -110,7 +111,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
     }
 
     @Override
-    public InvitationResponse cancelInvitation(String inviteId) {
+    public InvitationResponse cancelInvitation(UUID inviteId) {
         Invitation invitation = invitationRepository.findById(inviteId)
                 .orElseThrow(()-> new ResourceNotFoundException(INVITATION_NOT_FOUND));
 
