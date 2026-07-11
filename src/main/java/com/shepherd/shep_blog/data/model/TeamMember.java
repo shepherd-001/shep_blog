@@ -2,6 +2,7 @@ package com.shepherd.shep_blog.data.model;
 
 import com.shepherd.shep_blog.common.baseEntities.BaseEntity;
 import com.shepherd.shep_blog.data.model.enums.TeamMemberRole;
+import com.shepherd.shep_blog.data.model.enums.TeamMemberStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

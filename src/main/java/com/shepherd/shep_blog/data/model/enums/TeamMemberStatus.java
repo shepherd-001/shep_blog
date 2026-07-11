@@ -1,4 +1,4 @@
-package com.shepherd.shep_blog.data.model;
+package com.shepherd.shep_blog.data.model.enums;
 
 public enum TeamMemberStatus {
     ACTIVE,

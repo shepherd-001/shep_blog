@@ -14,19 +14,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByUsernameIgnoreCase(String username);
     boolean existsByEmailIgnoreCase(String email);
     boolean existsByRoles_Name(String roleName);
-
-//@Query("""
-//    SELECT CASE WHEN EXISTS (
-//        SELECT 1
-//        FROM User u
-//        JOIN u.roles r
-//        WHERE u.id = :userId
-//          AND r.name = :roleName
-//    )
-//    THEN true ELSE false END
-//""")
-//boolean existsUserRole(@Param("userId") UUID userId,
-//                       @Param("roleName") String roleName);
     boolean existsByIdAndRoles_Name(UUID userId, String roleName);
 
     Optional<User> findByEmailIgnoreCase(String email);
@@ -38,7 +25,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
         left join fetch r.permissions
         where lower(u.email) = lower(:email)
       """)
-    Optional<User> findByEmailWithRoleAndPermissions(@Param("email") String email);
+    Optional<User> findByEmailWithRoleAndPermissions(String email);
 
     @Query("""
         select u from User u

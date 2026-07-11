@@ -21,14 +21,14 @@ public class PermissionService {
 //    @Cacheable(value = CACHE_NAME, key = "#name.toUpperCase()")
     public Permission getPermission(String name){
         log.info("Fetching permission '{}' from DB", name);
-        return permissionRepository.findByNameEqualsIgnoreCase(name.trim())
+        return permissionRepository.findByNameIgnoreCase(name.trim())
                 .orElseThrow(() -> new ResourceNotFoundException("Permission not found"));
     }
 
 //    @CachePut(value = CACHE_NAME, key = "#name.toUpperCase()")
     public Permission addPermission(String name){
         name = name.trim();
-        if(permissionRepository.existsByNameEqualsIgnoreCase(name)){
+        if(permissionRepository.existsByNameIgnoreCase(name)){
             throw new AlreadyExistsException(String.format("Permission '%s' already exists", name));
         }
 

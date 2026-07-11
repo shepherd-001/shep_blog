@@ -17,15 +17,16 @@ public class ApplicationAuditAware implements AuditorAware<UUID> {
         Authentication authentication = SecurityContextHolder
                 .getContext()
                 .getAuthentication();
-        if(authentication == null ||
+        if (authentication == null ||
                 !authentication.isAuthenticated()
                 || authentication instanceof AnonymousAuthenticationToken) {
             return Optional.empty();
         }
-        if(authentication.getPrincipal()  instanceof AuthenticatedUser){
+        if (authentication.getPrincipal() instanceof AuthenticatedUser) {
             return Optional.of(((AuthenticatedUser)
                     authentication.getPrincipal()).getUser().getId());
-        };
+        }
+        ;
         return Optional.empty();
     }
 }

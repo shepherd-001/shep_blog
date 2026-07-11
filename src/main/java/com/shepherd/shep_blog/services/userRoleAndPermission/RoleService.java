@@ -1,5 +1,6 @@
 package com.shepherd.shep_blog.services.userRoleAndPermission;
 
+import com.shepherd.shep_blog.common.exceptions.ShepBlogException;
 import com.shepherd.shep_blog.data.model.Permission;
 import com.shepherd.shep_blog.data.model.UserRole;
 import com.shepherd.shep_blog.data.repository.UserRoleRepository;
@@ -12,6 +13,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,7 +30,7 @@ public class RoleService {
 //    @Cacheable(value = CACHE_NAME, key = "#name.toUpperCase()")
     public UserRole getRole(String name){
         log.info("==>> Loading role '{}' from DB", name);
-        return userRoleRepository.findByNameEqualsIgnoreCase(name.trim())
+        return userRoleRepository.findByNameIgnoreCase(name.trim())
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Role '%s' not found", name)));
     }
 

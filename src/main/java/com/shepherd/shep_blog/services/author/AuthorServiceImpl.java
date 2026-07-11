@@ -9,7 +9,7 @@ import com.shepherd.shep_blog.common.response.PaginationResponse;
 import com.shepherd.shep_blog.data.dto.response.TeamMemberResponse;
 import com.shepherd.shep_blog.data.model.Author;
 import com.shepherd.shep_blog.data.model.TeamMember;
-import com.shepherd.shep_blog.data.model.TeamMemberStatus;
+import com.shepherd.shep_blog.data.model.enums.TeamMemberStatus;
 import com.shepherd.shep_blog.data.model.User;
 import com.shepherd.shep_blog.data.model.enums.TeamMemberRole;
 import com.shepherd.shep_blog.data.model.enums.TokenType;

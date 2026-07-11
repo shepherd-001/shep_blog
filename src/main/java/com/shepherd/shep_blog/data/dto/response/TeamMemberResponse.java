@@ -1,6 +1,6 @@
 package com.shepherd.shep_blog.data.dto.response;
 
-import com.shepherd.shep_blog.data.model.TeamMemberStatus;
+import com.shepherd.shep_blog.data.model.enums.TeamMemberStatus;
 import com.shepherd.shep_blog.data.model.enums.Gender;
 import com.shepherd.shep_blog.data.model.enums.TeamMemberRole;
 import lombok.AllArgsConstructor;

@@ -55,7 +55,7 @@ public class RoleSeeder {
         // Now seed roles
         rolePermissionMap.forEach((roleName, permissionNames) -> {
 
-            UserRole role = roleRepository.findByNameEqualsIgnoreCase(roleName).orElse(null);
+            UserRole role = roleRepository.findByNameIgnoreCase(roleName).orElse(null);
 
             Set<Permission> requiredPermissions =
                     permissionNames.stream()

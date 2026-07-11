@@ -3,6 +3,7 @@ package com.shepherd.shep_blog.common.baseEntities;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,12 +31,16 @@ public abstract class AuditableEntity extends BaseEntity{
     private Instant createdAt;
 
     @CreatedBy
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     private UUID createdBy;
 
     @LastModifiedDate
-    private Instant lastModifiedAt;
+    @Column(nullable = false)
+    private Instant updatedAt;
 
     @LastModifiedBy
-    private UUID lastModifiedBy;
+    private UUID updatedBy;
+
+    @Version
+    private Long version;
 }
